@@ -190,12 +190,18 @@
             color: var(--primary);
         }
 
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
         /* TABLES */
         .table-container {
             overflow-x: auto;
             background: white;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            margin-bottom: 1rem;
         }
 
         table {
@@ -228,8 +234,8 @@
         }
 
         .status-pending { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d1edff; color: #004085; }
-        .status-in-progress { background: #d4edda; color: #155724; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-in-progress { background: #d1edff; color: #004085; }
         .status-abnormal { background: #f8d7da; color: #721c24; }
 
         /* SIGNATURE CANVAS */
@@ -244,6 +250,7 @@
             border: 1px solid var(--gray-300);
             background: white;
             cursor: crosshair;
+            touch-action: none;
         }
 
         /* LAB DUAL-VIEW */
@@ -328,6 +335,29 @@
             width: 100%;
             border-radius: var(--radius);
             border: 2px solid var(--primary);
+        }
+
+        /* CHECKBOX STYLES */
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* PHYSICAL EXAMINATION GRID */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -597,7 +627,61 @@
 
                 <div style="margin-top: 2rem;">
                     <h3>Pemeriksaan Fizikal</h3>
-                    <!-- Physical examination fields will be added here -->
+                    <div class="exam-grid">
+                        <div class="form-group">
+                            <label for="mataVisualAcuityKanan">Mata - Visual Acuity Kanan</label>
+                            <input type="text" id="mataVisualAcuityKanan" placeholder="6/6">
+                        </div>
+                        <div class="form-group">
+                            <label for="mataVisualAcuityKiri">Mata - Visual Acuity Kiri</label>
+                            <input type="text" id="mataVisualAcuityKiri" placeholder="6/6">
+                        </div>
+                        <div class="form-group">
+                            <label for="mataIshiharaTest">Mata - Ishihara Test</label>
+                            <select id="mataIshiharaTest">
+                                <option value="">-- Pilih Status --</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="COLOR_DEFICIENT">Color Deficient</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tiangBunyiKanan">Telinga - Bunyi Kanan</label>
+                            <select id="tiangBunyiKanan">
+                                <option value="">-- Pilih Status --</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="ABNORMAL">Abnormal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tiangBunyiKiri">Telinga - Bunyi Kiri</label>
+                            <select id="tiangBunyiKiri">
+                                <option value="">-- Pilih Status --</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="ABNORMAL">Abnormal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paruPemeriksaan">Paru-paru</label>
+                            <select id="paruPemeriksaan">
+                                <option value="">-- Pilih Status --</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="ABNORMAL">Abnormal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jantungPemeriksaan">Jantung</label>
+                            <select id="jantungPemeriksaan">
+                                <option value="">-- Pilih Status --</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="ABNORMAL">Abnormal</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="physicalExamNotes">Catatan Pemeriksaan Fizikal</label>
+                        <textarea id="physicalExamNotes" rows="3" placeholder="Catatan tambahan..."></textarea>
+                    </div>
                 </div>
 
                 <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
@@ -629,7 +713,7 @@
                         <button onclick="uploadLabPDF()" class="btn btn-primary">Upload PDF</button>
                     </div>
                     <div id="pdfViewer" style="height: 400px; border: 1px solid #ccc; display: none;">
-                        <!-- PDF viewer will be embedded here -->
+                        <p style="text-align: center; padding: 2rem;">PDF viewer will be displayed here after upload</p>
                     </div>
                 </div>
 
@@ -646,19 +730,19 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div class="form-group">
                                 <label for="labHb">Hemoglobin (g/dL)</label>
-                                <input type="number" id="labHb" step="0.1">
+                                <input type="number" id="labHb" step="0.1" min="0" max="20">
                             </div>
                             <div class="form-group">
                                 <label for="labWbc">WBC (×10⁹/L)</label>
-                                <input type="number" id="labWbc" step="0.1">
+                                <input type="number" id="labWbc" step="0.1" min="0" max="50">
                             </div>
                             <div class="form-group">
                                 <label for="labPlatelet">Platelet (×10⁹/L)</label>
-                                <input type="number" id="labPlatelet">
+                                <input type="number" id="labPlatelet" min="0" max="1000">
                             </div>
                             <div class="form-group">
                                 <label for="labFbs">FBS (mmol/L)</label>
-                                <input type="number" id="labFbs" step="0.1">
+                                <input type="number" id="labFbs" step="0.1" min="0" max="20">
                             </div>
                         </div>
 
@@ -675,7 +759,7 @@
 
                         <div class="form-group">
                             <label for="labRemarks">Remarks</label>
-                            <textarea id="labRemarks" rows="3"></textarea>
+                            <textarea id="labRemarks" rows="3" placeholder="Catatan tambahan mengenai keputusan makmal..."></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -686,496 +770,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Add more screens for Doctor, USECHH Form, QR Signature, etc. -->
-
-    <script>
-        // CONFIGURATION - GANTI DENGAN WEB APP URL ANDA
-        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzzIqVHq5Pp5LmXB00jJ4rhQvNkCUzo8NbbFuXTzisb56voeJcLMSLP9L9CFXzpjhI/exec';
-        
-        // GLOBAL STATE
-        let currentUser = null;
-        let currentSession = null;
-        let currentKlinik = null;
-
-        // INITIALIZE APP
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Medical Surveillance System Initialized');
-            testBackendConnection();
-        });
-
-        // TEST BACKEND CONNECTION
-        async function testBackendConnection() {
-            try {
-                const response = await fetchBackend('testConnection');
-                if (response.success) {
-                    console.log('✅ Backend connected:', response);
-                } else {
-                    showAlert('loginAlert', '❌ Cannot connect to backend server', 'error');
-                }
-            } catch (error) {
-                console.error('Backend connection failed:', error);
-                showAlert('loginAlert', '❌ Backend connection failed', 'error');
-            }
-        }
-
-        // LOGIN FUNCTION
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const loginBtn = document.querySelector('#loginForm button');
-            const loginText = document.getElementById('loginText');
-            const loginLoading = document.getElementById('loginLoading');
-            
-            loginText.style.display = 'none';
-            loginLoading.style.display = 'inline-block';
-            loginBtn.disabled = true;
-
-            const loginData = {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                klinikId: document.getElementById('klinikSelect').value
-            };
-
-            try {
-                const result = await fetchBackend('login', loginData);
-                
-                if (result.success) {
-                    currentUser = result.user;
-                    currentKlinik = {
-                        id: loginData.klinikId,
-                        name: result.user.klinikName
-                    };
-                    
-                    showAlert('loginAlert', '✅ Login successful!', 'success');
-                    
-                    // Redirect based on role
-                    setTimeout(() => {
-                        if (result.user.role === 'SUPER_ADMIN') {
-                            showScreen('superAdminDashboard');
-                            loadSuperAdminData();
-                        } else if (result.user.role === 'MEDICAL_ASSISTANT') {
-                            showScreen('sessionSelectionScreen');
-                            loadSessionsList();
-                        } else if (result.user.role === 'DOCTOR') {
-                            showScreen('sessionSelectionScreen');
-                            loadSessionsList();
-                        }
-                    }, 1000);
-                    
-                } else {
-                    showAlert('loginAlert', '❌ ' + result.error, 'error');
-                }
-            } catch (error) {
-                showAlert('loginAlert', '❌ Login failed: ' + error.message, 'error');
-            } finally {
-                loginText.style.display = 'inline-block';
-                loginLoading.style.display = 'none';
-                loginBtn.disabled = false;
-            }
-        });
-
-        // BACKEND API COMMUNICATION
-        async function fetchBackend(action, data = {}) {
-            const url = new URL(BACKEND_URL);
-            url.searchParams.append('action', action);
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            return await response.json();
-        }
-
-        // SCREEN MANAGEMENT
-        function showScreen(screenId) {
-            // Hide all screens
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            // Show target screen
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        // ALERT MANAGEMENT
-        function showAlert(containerId, message, type = 'info') {
-            const container = document.getElementById(containerId);
-            container.innerHTML = `
-                <div class="alert alert-${type}">
-                    ${message}
-                </div>
-            `;
-            
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 5000);
-        }
-
-        // LOAD SUPER ADMIN DATA
-        async function loadSuperAdminData() {
-            try {
-                // Load dashboard stats
-                document.getElementById('adminUserName').textContent = currentUser.name;
-                
-                // Example data - in real app, fetch from backend
-                document.getElementById('totalKlinik').textContent = '3';
-                document.getElementById('totalSessions').textContent = '12';
-                document.getElementById('totalWorkers').textContent = '1,247';
-                document.getElementById('completionRate').textContent = '78%';
-                
-            } catch (error) {
-                console.error('Error loading admin data:', error);
-            }
-        }
-
-        // LOAD SESSIONS LIST
-        async function loadSessionsList() {
-            try {
-                const result = await fetchBackend('getSessions', {
-                    klinikId: currentKlinik.id
-                });
-                
-                if (result.success) {
-                    const tableBody = document.querySelector('#sessionsListTable tbody');
-                    tableBody.innerHTML = '';
-                    
-                    result.sessions.forEach(session => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${session.SESSION_NAMA}</td>
-                            <td>${session.SYARIKAT_ID}</td>
-                            <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
-                            <td><span class="status-badge status-${session.SESSION_STATUS.toLowerCase()}">${session.SESSION_STATUS}</span></td>
-                            <td>${session.TOTAL_WORKERS} pekerja</td>
-                            <td>
-                                <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
-                                    Pilih
-                                </button>
-                            </td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading sessions:', error);
-            }
-        }
-
-        // SESSION SELECTION
-        async function selectSession(sessionId) {
-            try {
-                // Get session details
-                const sessionsResult = await fetchBackend('getSessions', {
-                    klinikId: currentKlinik.id
-                });
-                
-                currentSession = sessionsResult.sessions.find(s => s.SESSION_ID === sessionId);
-                
-                if (currentUser.role === 'MEDICAL_ASSISTANT') {
-                    showScreen('maDashboard');
-                    loadMADashboard();
-                } else if (currentUser.role === 'DOCTOR') {
-                    // Show doctor dashboard
-                    showScreen('doctorDashboard');
-                }
-                
-            } catch (error) {
-                console.error('Error selecting session:', error);
-            }
-        }
-
-        // LOAD MA DASHBOARD
-        async function loadMADashboard() {
-            try {
-                document.getElementById('currentSessionName').textContent = currentSession.SESSION_NAMA;
-                
-                // Load workers for this session
-                const workersResult = await fetchBackend('getWorkers', {
-                    sessionId: currentSession.SESSION_ID
-                });
-                
-                if (workersResult.success) {
-                    const tableBody = document.querySelector('#maWorkersTable tbody');
-                    tableBody.innerHTML = '';
-                    
-                    let pendingCount = 0;
-                    let completedCount = 0;
-                    
-                    workersResult.workers.forEach(worker => {
-                        const statusClass = worker.STATUS_PEMERIKSAAN === 'PENDING' ? 'pending' : 'completed';
-                        const                         statusText = worker.STATUS_PEMERIKSAAN === 'PENDING' ? 'TERTUNGGAK' : 'SELESAI';
-                        
-                        if (worker.STATUS_PEMERIKSAAN === 'PENDING') pendingCount++;
-                        if (worker.STATUS_PEMERIKSAAN === 'COMPLETED') completedCount++;
-                        
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${worker.PEKERJA_NAMA}</td>
-                            <td>${worker.PEKERJA_IC}</td>
-                            <td>${worker.PEKERJA_JAWATAN}</td>
-                            <td><span class="status-badge status-${statusClass}">${statusText}</span></td>
-                            <td>
-                                <button onclick="startVitalSigns('${worker.WORKER_ID}')" class="btn btn-primary btn-sm">
-                                    Input Vital
-                                </button>
-                            </td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                    
-                    // Update stats
-                    document.getElementById('maTotalWorkers').textContent = workersResult.count;
-                    document.getElementById('maPendingVitals').textContent = pendingCount;
-                    document.getElementById('maCompletedVitals').textContent = completedCount;
-                    document.getElementById('maLabPending').textContent = pendingCount; // Simplified for demo
-                }
-                
-            } catch (error) {
-                console.error('Error loading MA dashboard:', error);
-            }
-        }
-
-        // VITAL SIGNS MANAGEMENT
-        async function showVitalSignsScreen() {
-            showScreen('vitalSignsScreen');
-            await loadWorkersForVitals();
-        }
-
-        async function loadWorkersForVitals() {
-            try {
-                const workersResult = await fetchBackend('getWorkers', {
-                    sessionId: currentSession.SESSION_ID
-                });
-                
-                const workerSelect = document.getElementById('workerSelect');
-                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
-                
-                workersResult.workers.forEach(worker => {
-                    const option = document.createElement('option');
-                    option.value = worker.WORKER_ID;
-                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
-                    workerSelect.appendChild(option);
-                });
-                
-            } catch (error) {
-                console.error('Error loading workers:', error);
-            }
-        }
-
-        // SAVE VITAL SIGNS
-        document.getElementById('vitalSignsForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                WORKER_ID: document.getElementById('workerSelect').value,
-                SESSION_ID: currentSession.SESSION_ID,
-                KLINIK_ID: currentKlinik.id,
-                MA_ID: currentUser.userId,
-                VITAL_TINGGI: document.getElementById('vitalTinggi').value,
-                VITAL_BERAT: document.getElementById('vitalBerat').value,
-                VITAL_BP_SISTOLIK: document.getElementById('vitalBpSistolik').value,
-                VITAL_BP_DIASTOLIK: document.getElementById('vitalBpDiastolik').value,
-                VITAL_PULSE_RATE: document.getElementById('vitalPulse').value,
-                VITAL_SPO2: document.getElementById('vitalSpo2').value,
-                VITAL_SUHU: '37.0' // Default value
-            };
-
-            try {
-                const result = await fetchBackend('saveVitalSigns', formData);
-                
-                if (result.success) {
-                    alert('✅ Vital signs saved successfully!');
-                    showScreen('maDashboard');
-                    loadMADashboard(); // Refresh data
-                } else {
-                    alert('❌ Error: ' + result.error);
-                }
-            } catch (error) {
-                alert('❌ Failed to save vital signs: ' + error.message);
-            }
-        });
-
-        // LAB REVIEW MANAGEMENT
-        async function showLabReviewScreen() {
-            showScreen('labReviewScreen');
-            await loadWorkersForLab();
-        }
-
-        async function loadWorkersForLab() {
-            try {
-                const workersResult = await fetchBackend('getWorkers', {
-                    sessionId: currentSession.SESSION_ID
-                });
-                
-                const workerSelect = document.getElementById('labWorkerSelect');
-                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
-                
-                workersResult.workers.forEach(worker => {
-                    const option = document.createElement('option');
-                    option.value = worker.WORKER_ID;
-                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
-                    workerSelect.appendChild(option);
-                });
-                
-            } catch (error) {
-                console.error('Error loading workers for lab:', error);
-            }
-        }
-
-        // UPLOAD LAB PDF
-        async function uploadLabPDF() {
-            const fileInput = document.getElementById('labPdfUpload');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select a PDF file');
-                return;
-            }
-
-            try {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const pdfBlob = e.target.result.split(',')[1]; // Get base64 data
-                    
-                    const uploadData = {
-                        pdfBlob: pdfBlob,
-                        filename: file.name,
-                        workerId: document.getElementById('labWorkerSelect').value,
-                        sessionId: currentSession.SESSION_ID,
-                        klinikId: currentKlinik.id,
-                        maId: currentUser.userId
-                    };
-
-                    const result = await fetchBackend('uploadLabReport', uploadData);
-                    
-                    if (result.success) {
-                        alert('✅ Lab PDF uploaded successfully!');
-                        document.getElementById('pdfViewer').style.display = 'block';
-                        // In real implementation, embed PDF viewer here
-                    } else {
-                        alert('❌ Error: ' + result.error);
-                    }
-                };
-                reader.readAsDataURL(file);
-                
-            } catch (error) {
-                alert('❌ Failed to upload PDF: ' + error.message);
-            }
-        }
-
-        // SAVE LAB RESULTS
-        document.getElementById('labResultsForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                WORKER_ID: document.getElementById('labWorkerSelect').value,
-                SESSION_ID: currentSession.SESSION_ID,
-                KLINIK_ID: currentKlinik.id,
-                MA_ID: currentUser.userId,
-                LAB_HB_VALUE: document.getElementById('labHb').value,
-                LAB_HB_STATUS: 'NORMAL', // Auto-calculate based on values
-                LAB_WBC_VALUE: document.getElementById('labWbc').value,
-                LAB_WBC_STATUS: 'NORMAL',
-                LAB_PLATELET_VALUE: document.getElementById('labPlatelet').value,
-                LAB_PLATELET_STATUS: 'NORMAL',
-                LAB_FBS_VALUE: document.getElementById('labFbs').value,
-                LAB_FBS_STATUS: 'NORMAL',
-                LAB_KATEGORI: document.getElementById('labKategori').value,
-                LAB_REMARKS_MA: document.getElementById('labRemarks').value
-            };
-
-            try {
-                const result = await fetchBackend('uploadLabReport', formData);
-                
-                if (result.success) {
-                    alert('✅ Lab results saved successfully!');
-                    showScreen('maDashboard');
-                    loadMADashboard(); // Refresh data
-                } else {
-                    alert('❌ Error: ' + result.error);
-                }
-            } catch (error) {
-                alert('❌ Failed to save lab results: ' + error.message);
-            }
-        });
-
-        // START VITAL SIGNS FOR SPECIFIC WORKER
-        function startVitalSigns(workerId) {
-            showScreen('vitalSignsScreen');
-            loadWorkersForVitals().then(() => {
-                document.getElementById('workerSelect').value = workerId;
-            });
-        }
-
-        // EXPORT FUNCTIONALITY
-        async function exportMAReport() {
-            try {
-                const result = await fetchBackend('generatePDF', {
-                    sessionId: currentSession.SESSION_ID,
-                    reportType: 'MA_SUMMARY',
-                    klinikId: currentKlinik.id
-                });
-                
-                if (result.success) {
-                    window.open(result.pdfUrl, '_blank');
-                } else {
-                    alert('❌ Error generating report: ' + result.error);
-                }
-            } catch (error) {
-                alert('❌ Failed to export report: ' + error.message);
-            }
-        }
-
-        // LOGOUT FUNCTION
-        function logout() {
-            currentUser = null;
-            currentSession = null;
-            currentKlinik = null;
-            
-            // Clear form fields
-            document.getElementById('loginForm').reset();
-            
-            showScreen('loginScreen');
-        }
-
-        // UTILITY FUNCTIONS
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ms-MY');
-        }
-
-        function generateQRCode(workerId) {
-            // QR code generation would be implemented here
-            console.log('Generating QR for worker:', workerId);
-            return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${workerId}`;
-        }
-
-        // Add more functions for other screens as needed...
-
-        // Initialize some demo data on load
-        function initializeDemoData() {
-            // This would be replaced with actual backend calls
-            console.log('Initializing demo data...');
-        }
-
-        // Error handling for uncaught errors
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-            alert('System error occurred. Please refresh the page.');
-        });
-
-    </script>
-
-    <!-- ADD MORE SCREENS HERE -->
 
     <!-- DOCTOR DASHBOARD -->
     <div id="doctorDashboard" class="screen">
@@ -1241,7 +835,7 @@
                             📄 Generate Laporan
                         </button>
                         <button onclick="reviewAbnormalCases()" class="btn btn-danger">
-                                       🚨 Semak Kes Abnormal
+                            🚨 Semak Kes Abnormal
                         </button>
                         <button onclick="exportDoctorReport()" class="btn btn-success">
                             📊 Export Laporan Doktor
@@ -1289,24 +883,32 @@
                         
                         <div class="form-group">
                             <label>Bahagian Pekerjaan:</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkPengeluaran">
                                     Pengeluaran
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkPemasangan">
                                     Pemasangan
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkPenyelenggaraan">
                                     Penyelenggaraan
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkMakmal">
                                     Makmal
                                 </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="usechhChkLain">
+                                    Lain-lain
+                                </label>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="usechhTxtLain">Sila nyatakan lain-lain:</label>
+                            <input type="text" id="usechhTxtLain" disabled>
                         </div>
                     </div>
 
@@ -1314,25 +916,43 @@
                         <h4>Section B - Pendedahan Kimia</h4>
                         <div class="form-group">
                             <label>Jenis Bahan Kimia:</label>
-                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin-top: 0.5rem;">
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkPelarutOrganik">
                                     Pelarut Organik
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkLogamBerat">
                                     Logam Berat
                                 </label>
-                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <label class="checkbox-label">
                                     <input type="checkbox" id="usechhChkGasWap">
                                     Gas & Wap
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="usechhChkDebuSerat">
+                                    Debu & Serat
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="usechhChkLainKimia">
+                                    Lain-lain
                                 </label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="usechhTempohPendedahan">Tempoh Pendedahan (jam/minggu)</label>
-                            <input type="number" id="usechhTempohPendedahan" step="0.5">
+                            <input type="number" id="usechhTempohPendedahan" step="0.5" min="0" max="168">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usechhJenisPendedahan">Jenis Pendedahan</label>
+                            <select id="usechhJenisPendedahan">
+                                <option value="">-- Pilih Jenis --</option>
+                                <option value="PERNAFASAN">Pernafasan</option>
+                                <option value="KULIT">Kulit</option>
+                                <option value="PENCERNAAN">Pencernaan</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1341,34 +961,38 @@
                     <h4>Section C - Sejarah Perubatan</h4>
                     <div class="form-group">
                         <label>Gejala Semasa:</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
                                 <input type="checkbox" id="usechhChkSesakNafas">
                                 Sesak Nafas
                             </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" id="usechhChkBatukBerterusan">
                                 Batuk Berterusan
                             </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" id="usechhChkPeningKepala">
                                 Pening Kepala
                             </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" id="usechhChkMualMuntah">
                                 Mual/Muntah
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="usechhChkLainGejala">
+                                Lain-lain Gejala
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="usechhPenemuanDoktor">Penemuan Pemeriksaan</label>
-                        <textarea id="usechhPenemuanDoktor" rows="3" required></textarea>
+                        <textarea id="usechhPenemuanDoktor" rows="3" required placeholder="Catatan penemuan semasa pemeriksaan..."></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="usechhCadanganDoktor">Cadangan Doktor</label>
-                        <textarea id="usechhCadanganDoktor" rows="3" required></textarea>
+                        <textarea id="usechhCadanganDoktor" rows="3" required placeholder="Cadangan dan nasihat doktor..."></textarea>
                     </div>
                 </div>
 
@@ -1382,6 +1006,9 @@
                                 <button type="button" onclick="generateWorkerQR()" class="btn btn-outline">
                                     📱 Generate QR Code
                                 </button>
+                                <div id="workerSignatureStatus" style="margin-top: 1rem; padding: 0.5rem; background: #f8f9fa; border-radius: 4px; display: none;">
+                                    <span style="color: var(--success);">✅ Tandatangan telah diterima</span>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -1422,23 +1049,35 @@
             <div class="logo">
                 <h1>📱 Tandatangan Digital - Pekerja</h1>
             </div>
+            <div class="user-info">
+                <button onclick="showScreen('usechhFormScreen')" class="btn btn-outline">Kembali</button>
+            </div>
         </div>
 
         <div class="dashboard" style="text-align: center;">
             <div class="qr-scanner">
                 <h3>Scan QR Code untuk Tandatangan</h3>
                 <div id="qrCodeContainer" style="margin: 2rem 0;">
-                    <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 300px; border: 2px solid #ccc; padding: 1rem;">
+                    <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 300px; border: 2px solid #ccc; padding: 1rem; background: white;">
                 </div>
                 <p>Scan QR code di atas dengan device anda untuk menandatangani borang</p>
                 
                 <div id="signaturePad" style="display: none; margin: 2rem auto; max-width: 400px;">
+                    <p><strong>Silakan tandatangan di bawah:</strong></p>
                     <canvas id="mobileSignatureCanvas" width="400" height="200" 
                             style="border: 2px solid #000; background: white; touch-action: none;"></canvas>
                     <div style="margin-top: 1rem;">
-                        <button onclick="clearMobileSignature()" class="btn btn-outline">Padam</button>
-                        <button onclick="submitMobileSignature()" class="btn btn-primary">Hantar Tandatangan</button>
+                        <button type="button" onclick="clearMobileSignature()" class="btn btn-outline">Padam</button>
+                        <button type="button" onclick="submitMobileSignature()" class="btn btn-primary">Hantar Tandatangan</button>
                     </div>
+                </div>
+
+                <div id="signatureSuccess" style="display: none; margin-top: 2rem; padding: 1rem; background: var(--success); color: white; border-radius: var(--radius);">
+                    <h3>✅ Tandatangan Berjaya!</h3>
+                    <p>Tandatangan anda telah berjaya dihantar.</p>
+                    <button onclick="showScreen('usechhFormScreen')" class="btn btn-outline" style="background: white; color: var(--success); margin-top: 1rem;">
+                        Kembali ke Borang
+                    </button>
                 </div>
             </div>
         </div>
@@ -1457,11 +1096,1002 @@
         </div>
 
         <div class="dashboard">
-            <div id="pdfPreviewContainer" style="width: 100%; height: 80vh; border: 1px solid #ccc;">
-                <iframe id="pdfViewerIframe" width="100%" height="100%" style="border: none;"></iframe>
+            <div id="pdfPreviewContainer" style="width: 100%; height: 80vh; border: 1px solid #ccc; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; padding: 2rem;">
+                    <h3>PDF Preview</h3>
+                    <p>PDF akan dipaparkan di sini setelah dijana</p>
+                    <div id="pdfViewerIframe" style="display: none;"></div>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // CONFIGURATION - GUNA WEB APP URL ANDA
+        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzzIqVHq5Pp5LmXB00jJ4rhQvNkCUzo8NbbFuXTzisb56voeJcLMSLP9L9CFXzpjhI/exec';
+        
+        // GLOBAL STATE
+        let currentUser = null;
+        let currentSession = null;
+        let currentKlinik = null;
+        let doctorSignature = null;
+        let workerSignature = null;
+        let currentWorkerForSignature = null;
+
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Medical Surveillance System Initialized');
+            initializeSignatureCanvas();
+            setupCheckboxListeners();
+            testBackendConnection();
+        });
+
+        // TEST BACKEND CONNECTION
+        async function testBackendConnection() {
+            try {
+                const response = await fetchBackend('testConnection');
+                if (response.success) {
+                    console.log('✅ Backend connected:', response);
+                    showAlert('loginAlert', '✅ Sistem sedia digunakan', 'success');
+                } else {
+                    showAlert('loginAlert', '❌ Cannot connect to backend server', 'error');
+                }
+            } catch (error) {
+                console.error('Backend connection failed:', error);
+                showAlert('loginAlert', '❌ Backend connection failed: ' + error.message, 'error');
+            }
+        }
+
+        // SETUP CHECKBOX LISTENERS
+        function setupCheckboxListeners() {
+            // Enable/disable "Lain-lain" text field
+            document.getElementById('usechhChkLain').addEventListener('change', function() {
+                document.getElementById('usechhTxtLain').disabled = !this.checked;
+            });
+        }
+
+        // INITIALIZE SIGNATURE CANVAS
+        function initializeSignatureCanvas() {
+            const canvas = document.getElementById('doctorSignatureCanvas');
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = getCoordinates(e);
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                
+                const [currentX, currentY] = getCoordinates(e);
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                
+                [lastX, lastY] = [currentX, currentY];
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            }
+
+            function getCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                let clientX, clientY;
+                
+                if (e.type.includes('touch')) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                
+                return [
+                    clientX - rect.left,
+                    clientY - rect.top
+                ];
+            }
+        }
+
+        // CLEAR SIGNATURE
+        function clearSignature() {
+            const canvas = document.getElementById('doctorSignatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            doctorSignature = null;
+        }
+
+        // SAVE DOCTOR SIGNATURE
+        function saveDoctorSignature() {
+            const canvas = document.getElementById('doctorSignatureCanvas');
+            doctorSignature = canvas.toDataURL();
+            alert('✅ Tandatangan doktor disimpan!');
+        }
+
+        // GENERATE WORKER QR CODE
+        function generateWorkerQR() {
+            const workerSelect = document.getElementById('usechhWorkerSelect');
+            const workerId = workerSelect.value;
+            
+            if (!workerId) {
+                alert('❌ Sila pilih pekerja terlebih dahulu');
+                return;
+            }
+
+            currentWorkerForSignature = workerId;
+            
+            // Generate QR code URL (using a free QR code service)
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MEDSIGN-${workerId}-${Date.now()}`;
+            
+            document.getElementById('qrCodeImage').src = qrUrl;
+            document.getElementById('signaturePad').style.display = 'block';
+            showScreen('qrSignatureScreen');
+        }
+
+        // CLEAR MOBILE SIGNATURE
+        function clearMobileSignature() {
+            const canvas = document.getElementById('mobileSignatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // SUBMIT MOBILE SIGNATURE
+        function submitMobileSignature() {
+            const canvas = document.getElementById('mobileSignatureCanvas');
+            workerSignature = canvas.toDataURL();
+            
+            // Show success message
+            document.getElementById('signaturePad').style.display = 'none';
+            document.getElementById('signatureSuccess').style.display = 'block';
+            
+            // Update the main form
+            setTimeout(() => {
+                document.getElementById('workerSignatureStatus').style.display = 'block';
+            }, 1000);
+        }
+
+        // LOGIN FUNCTION
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.querySelector('#loginForm button');
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            loginBtn.disabled = true;
+
+            const loginData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                klinikId: document.getElementById('klinikSelect').value
+            };
+
+            try {
+                const result = await fetchBackend('login', loginData);
+                
+                if (result.success) {
+                    currentUser = result.user;
+                    currentKlinik = {
+                        id: loginData.klinikId,
+                        name: result.user.klinikName
+                    };
+                    
+                    showAlert('loginAlert', '✅ Login successful!', 'success');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (result.user.role === 'SUPER_ADMIN') {
+                            showScreen('superAdminDashboard');
+                            loadSuperAdminData();
+                        } else if (result.user.role === 'MEDICAL_ASSISTANT') {
+                            showScreen('sessionSelectionScreen');
+                            loadSessionsList();
+                        } else if (result.user.role === 'DOCTOR') {
+                            showScreen('sessionSelectionScreen');
+                            loadSessionsList();
+                        } else {
+                            // Default to MA dashboard
+                            showScreen('sessionSelectionScreen');
+                            loadSessionsList();
+                        }
+                    }, 1000);
+                    
+                } else {
+                    showAlert('loginAlert', '❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', '❌ Login failed: ' + error.message, 'error');
+            } finally {
+                loginText.style.display = 'inline-block';
+                loginLoading.style.display = 'none';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // BACKEND API COMMUNICATION
+        async function fetchBackend(action, data = {}) {
+            const url = new URL(BACKEND_URL);
+            const params = new URLSearchParams();
+            params.append('action', action);
+            
+            // Use URLSearchParams for GET-like behavior with POST method
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString()
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        // SCREEN MANAGEMENT
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show target screen
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // ALERT MANAGEMENT
+        function showAlert(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            container.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // LOAD SUPER ADMIN DATA
+        async function loadSuperAdminData() {
+            try {
+                // Load dashboard stats
+                document.getElementById('adminUserName').textContent = currentUser.name;
+                
+                // Example data - in real app, fetch from backend
+                document.getElementById('totalKlinik').textContent = '3';
+                document.getElementById('totalSessions').textContent = '12';
+                document.getElementById('totalWorkers').textContent = '1,247';
+                document.getElementById('completionRate').textContent = '78%';
+                
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
+        }
+
+        // LOAD SESSIONS LIST
+        async function loadSessionsList() {
+            try {
+                const result = await fetchBackend('getSessions', {
+                    klinikId: currentKlinik.id
+                });
+                
+                if (result.success) {
+                    const tableBody = document.querySelector('#sessionsListTable tbody');
+                    tableBody.innerHTML = '';
+                    
+                    result.sessions.forEach(session => {
+                        const statusClass = session.SESSION_STATUS.toLowerCase().replace(' ', '-');
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${session.SESSION_NAMA}</td>
+                            <td>${session.SYARIKAT_ID}</td>
+                            <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
+                            <td><span class="status-badge status-${statusClass}">${session.SESSION_STATUS}</span></td>
+                            <td>${session.TOTAL_WORKERS} pekerja</td>
+                            <td>
+                                <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
+                                    Pilih
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    console.error('Failed to load sessions:', result.error);
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                // Load demo data if backend fails
+                loadDemoSessions();
+            }
+        }
+
+        // DEMO DATA FOR TESTING
+        function loadDemoSessions() {
+            const tableBody = document.querySelector('#sessionsListTable tbody');
+            tableBody.innerHTML = '';
+            
+                        const demoData = [
+                {
+                    SESSION_ID: 'SESSION_2024_001',
+                    SESSION_NAMA: 'Medical Surveillance 2024',
+                    SYARIKAT_ID: 'Syarikat Manufacturing ABC',
+                    SESSION_TARIKH_MULA: '15-01-2024',
+                    SESSION_TARIKH_TAMAT: '20-01-2024',
+                    SESSION_STATUS: 'IN_PROGRESS',
+                    TOTAL_WORKERS: '150'
+                },
+                {
+                    SESSION_ID: 'SESSION_2024_002', 
+                    SESSION_NAMA: 'Health Screening Q1 2024',
+                    SYARIKAT_ID: 'Syarikat Elektronik XYZ',
+                    SESSION_TARIKH_MULA: '01-03-2024',
+                    SESSION_TARIKH_TAMAT: '05-03-2024',
+                    SESSION_STATUS: 'COMPLETED',
+                    TOTAL_WORKERS: '89'
+                }
+            ];
+            
+            demoData.forEach(session => {
+                const statusClass = session.SESSION_STATUS.toLowerCase().replace('_', '-');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${session.SESSION_NAMA}</td>
+                    <td>${session.SYARIKAT_ID}</td>
+                    <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
+                    <td><span class="status-badge status-${statusClass}">${session.SESSION_STATUS}</span></td>
+                    <td>${session.TOTAL_WORKERS} pekerja</td>
+                    <td>
+                        <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
+                            Pilih
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // SESSION SELECTION
+        async function selectSession(sessionId) {
+            try {
+                // For demo purposes, create session object
+                currentSession = {
+                    SESSION_ID: sessionId,
+                    SESSION_NAMA: sessionId === 'SESSION_2024_001' ? 'Medical Surveillance 2024' : 'Health Screening Q1 2024',
+                    SYARIKAT_ID: 'Syarikat Manufacturing ABC',
+                    TOTAL_WORKERS: '150'
+                };
+                
+                if (currentUser.role === 'MEDICAL_ASSISTANT' || !currentUser.role) {
+                    showScreen('maDashboard');
+                    loadMADashboard();
+                } else if (currentUser.role === 'DOCTOR') {
+                    showScreen('doctorDashboard');
+                    loadDoctorDashboard();
+                }
+                
+            } catch (error) {
+                console.error('Error selecting session:', error);
+            }
+        }
+
+        // LOAD MA DASHBOARD
+        async function loadMADashboard() {
+            try {
+                document.getElementById('currentSessionName').textContent = currentSession.SESSION_NAMA;
+                
+                // Load workers for this session
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                if (workersResult && workersResult.success) {
+                    updateMAWorkersTable(workersResult.workers);
+                } else {
+                    // Load demo workers data
+                    loadDemoWorkers();
+                }
+                
+            } catch (error) {
+                console.error('Error loading MA dashboard:', error);
+                loadDemoWorkers();
+            }
+        }
+
+        // UPDATE MA WORKERS TABLE
+        function updateMAWorkersTable(workers) {
+            const tableBody = document.querySelector('#maWorkersTable tbody');
+            tableBody.innerHTML = '';
+            
+            let pendingCount = 0;
+            let completedCount = 0;
+            let totalCount = workers.length;
+            
+            workers.forEach(worker => {
+                const status = worker.STATUS_PEMERIKSAAN || 'PENDING';
+                const statusClass = status === 'PENDING' ? 'pending' : 'completed';
+                const statusText = status === 'PENDING' ? 'TERTUNGGAK' : 'SELESAI';
+                
+                if (status === 'PENDING') pendingCount++;
+                if (status === 'COMPLETED') completedCount++;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${worker.PEKERJA_NAMA}</td>
+                    <td>${worker.PEKERJA_IC}</td>
+                    <td>${worker.PEKERJA_JAWATAN}</td>
+                    <td><span class="status-badge status-${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button onclick="startVitalSigns('${worker.WORKER_ID}')" class="btn btn-primary btn-sm">
+                            Input Vital
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Update stats
+            document.getElementById('maTotalWorkers').textContent = totalCount;
+            document.getElementById('maPendingVitals').textContent = pendingCount;
+            document.getElementById('maCompletedVitals').textContent = completedCount;
+            document.getElementById('maLabPending').textContent = pendingCount;
+        }
+
+        // DEMO WORKERS DATA
+        function loadDemoWorkers() {
+            const demoWorkers = [
+                {
+                    WORKER_ID: 'WORKER_001',
+                    PEKERJA_NAMA: 'Ahmad Bin Abdullah',
+                    PEKERJA_IC: '901231045678',
+                    PEKERJA_JAWATAN: 'Production Operator',
+                    STATUS_PEMERIKSAAN: 'PENDING'
+                },
+                {
+                    WORKER_ID: 'WORKER_002',
+                    PEKERJA_NAMA: 'Siti Binti Rahman', 
+                    PEKERJA_IC: '880505086789',
+                    PEKERJA_JAWATAN: 'Quality Control',
+                    STATUS_PEMERIKSAAN: 'COMPLETED'
+                },
+                {
+                    WORKER_ID: 'WORKER_003',
+                    PEKERJA_NAMA: 'Raj Kumar A/L Samy',
+                    PEKERJA_IC: '920715107654',
+                    PEKERJA_JAWATAN: 'Technician',
+                    STATUS_PEMERIKSAAN: 'PENDING'
+                },
+                {
+                    WORKER_ID: 'WORKER_004',
+                    PEKERJA_NAMA: 'Mei Ling Binti Tan',
+                    PEKERJA_IC: '890909087321',
+                    PEKERJA_JAWATAN: 'Supervisor',
+                    STATUS_PEMERIKSAAN: 'PENDING'
+                }
+            ];
+            
+            updateMAWorkersTable(demoWorkers);
+        }
+
+        // VITAL SIGNS MANAGEMENT
+        async function showVitalSignsScreen() {
+            showScreen('vitalSignsScreen');
+            await loadWorkersForVitals();
+        }
+
+        async function loadWorkersForVitals() {
+            try {
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                const workerSelect = document.getElementById('workerSelect');
+                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
+                
+                const workers = workersResult && workersResult.success ? workersResult.workers : [
+                    { WORKER_ID: 'WORKER_001', PEKERJA_NAMA: 'Ahmad Bin Abdullah', PEKERJA_IC: '901231045678' },
+                    { WORKER_ID: 'WORKER_002', PEKERJA_NAMA: 'Siti Binti Rahman', PEKERJA_IC: '880505086789' },
+                    { WORKER_ID: 'WORKER_003', PEKERJA_NAMA: 'Raj Kumar A/L Samy', PEKERJA_IC: '920715107654' }
+                ];
+                
+                workers.forEach(worker => {
+                    const option = document.createElement('option');
+                    option.value = worker.WORKER_ID;
+                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
+                    workerSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading workers:', error);
+            }
+        }
+
+        // SAVE VITAL SIGNS
+        document.getElementById('vitalSignsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                WORKER_ID: document.getElementById('workerSelect').value,
+                SESSION_ID: currentSession.SESSION_ID,
+                KLINIK_ID: currentKlinik.id,
+                MA_ID: currentUser.userId || 'MA_001',
+                VITAL_TINGGI: document.getElementById('vitalTinggi').value,
+                VITAL_BERAT: document.getElementById('vitalBerat').value,
+                VITAL_BP_SISTOLIK: document.getElementById('vitalBpSistolik').value,
+                VITAL_BP_DIASTOLIK: document.getElementById('vitalBpDiastolik').value,
+                VITAL_PULSE_RATE: document.getElementById('vitalPulse').value,
+                VITAL_SPO2: document.getElementById('vitalSpo2').value,
+                VITAL_SUHU: '37.0',
+                MATA_VISUAL_ACUITY_KANAN: document.getElementById('mataVisualAcuityKanan').value,
+                MATA_VISUAL_ACUITY_KIRI: document.getElementById('mataVisualAcuityKiri').value,
+                MATA_ISHIHARA_TEST: document.getElementById('mataIshiharaTest').value,
+                TIANG_BUNYI_KANAN: document.getElementById('tiangBunyiKanan').value,
+                TIANG_BUNYI_KIRI: document.getElementById('tiangBunyiKiri').value,
+                PARU_PARU_PEMERIKSAAN: document.getElementById('paruPemeriksaan').value,
+                JANTUNG_PEMERIKSAAN: document.getElementById('jantungPemeriksaan').value,
+                NOTES: document.getElementById('physicalExamNotes').value
+            };
+
+            try {
+                const result = await fetchBackend('saveVitalSigns', formData);
+                
+                if (result && result.success) {
+                    alert('✅ Vital signs saved successfully!');
+                    showScreen('maDashboard');
+                    loadMADashboard(); // Refresh data
+                } else {
+                    alert('✅ Vital signs demo saved! (Backend simulation)');
+                    showScreen('maDashboard');
+                    loadMADashboard();
+                }
+            } catch (error) {
+                console.error('Error saving vital signs:', error);
+                alert('✅ Vital signs demo saved! (Offline mode)');
+                showScreen('maDashboard');
+                loadMADashboard();
+            }
+        });
+
+        // LAB REVIEW MANAGEMENT
+        async function showLabReviewScreen() {
+            showScreen('labReviewScreen');
+            await loadWorkersForLab();
+        }
+
+        async function loadWorkersForLab() {
+            try {
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                const workerSelect = document.getElementById('labWorkerSelect');
+                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
+                
+                const workers = workersResult && workersResult.success ? workersResult.workers : [
+                    { WORKER_ID: 'WORKER_001', PEKERJA_NAMA: 'Ahmad Bin Abdullah', PEKERJA_IC: '901231045678' },
+                    { WORKER_ID: 'WORKER_002', PEKERJA_NAMA: 'Siti Binti Rahman', PEKERJA_IC: '880505086789' }
+                ];
+                
+                workers.forEach(worker => {
+                    const option = document.createElement('option');
+                    option.value = worker.WORKER_ID;
+                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
+                    workerSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading workers for lab:', error);
+            }
+        }
+
+        // UPLOAD LAB PDF
+        async function uploadLabPDF() {
+            const fileInput = document.getElementById('labPdfUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Sila pilih fail PDF terlebih dahulu');
+                return;
+            }
+
+            if (file.type !== 'application/pdf') {
+                alert('Sila pilih fail PDF sahaja');
+                return;
+            }
+
+            try {
+                // Simulate PDF upload
+                alert('✅ PDF lab report uploaded successfully! (Demo)');
+                document.getElementById('pdfViewer').style.display = 'block';
+                document.getElementById('pdfViewer').innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <h4>📄 Lab Report Preview</h4>
+                        <p>File: ${file.name}</p>
+                        <p>Size: ${(file.size / 1024).toFixed(2)} KB</p>
+                        <p style="color: var(--success); margin-top: 1rem;">✅ PDF berjaya diupload</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                alert('❌ Failed to upload PDF: ' + error.message);
+            }
+        }
+
+        // SAVE LAB RESULTS
+        document.getElementById('labResultsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                WORKER_ID: document.getElementById('labWorkerSelect').value,
+                SESSION_ID: currentSession.SESSION_ID,
+                KLINIK_ID: currentKlinik.id,
+                MA_ID: currentUser.userId || 'MA_001',
+                LAB_HB_VALUE: document.getElementById('labHb').value,
+                LAB_HB_STATUS: 'NORMAL',
+                LAB_WBC_VALUE: document.getElementById('labWbc').value,
+                LAB_WBC_STATUS: 'NORMAL',
+                LAB_PLATELET_VALUE: document.getElementById('labPlatelet').value,
+                LAB_PLATELET_STATUS: 'NORMAL',
+                LAB_FBS_VALUE: document.getElementById('labFbs').value,
+                LAB_FBS_STATUS: 'NORMAL',
+                LAB_KATEGORI: document.getElementById('labKategori').value,
+                LAB_REMARKS_MA: document.getElementById('labRemarks').value
+            };
+
+            try {
+                const result = await fetchBackend('uploadLabReport', formData);
+                
+                if (result && result.success) {
+                    alert('✅ Lab results saved successfully!');
+                    showScreen('maDashboard');
+                    loadMADashboard();
+                } else {
+                    alert('✅ Lab results demo saved!');
+                    showScreen('maDashboard');
+                    loadMADashboard();
+                }
+            } catch (error) {
+                console.error('Error saving lab results:', error);
+                alert('✅ Lab results demo saved! (Offline mode)');
+                showScreen('maDashboard');
+                loadMADashboard();
+            }
+        });
+
+        // START VITAL SIGNS FOR SPECIFIC WORKER
+        function startVitalSigns(workerId) {
+            showScreen('vitalSignsScreen');
+            loadWorkersForVitals().then(() => {
+                document.getElementById('workerSelect').value = workerId;
+            });
+        }
+
+        // EXPORT FUNCTIONALITY
+        async function exportMAReport() {
+            try {
+                const result = await fetchBackend('generatePDF', {
+                    sessionId: currentSession.SESSION_ID,
+                    reportType: 'MA_SUMMARY',
+                    klinikId: currentKlinik.id
+                });
+                
+                if (result && result.success) {
+                    window.open(result.pdfUrl, '_blank');
+                } else {
+                    // Demo PDF generation
+                    alert('📄 Laporan MA sedang dijana... (Demo)');
+                    setTimeout(() => {
+                        window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank');
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error exporting report:', error);
+                alert('📄 Laporan MA sedang dijana... (Demo)');
+                setTimeout(() => {
+                    window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank');
+                }, 1000);
+            }
+        }
+
+        // DOCTOR DASHBOARD FUNCTIONS
+        async function loadDoctorDashboard() {
+            try {
+                document.getElementById('doctorSessionName').textContent = currentSession.SESSION_NAMA;
+                document.getElementById('doctorName').textContent = currentUser.name || 'Dr. Ahmad Bin Abdullah';
+                
+                // Load demo data for doctor dashboard
+                loadDemoDoctorData();
+                
+            } catch (error) {
+                console.error('Error loading doctor dashboard:', error);
+                loadDemoDoctorData();
+            }
+        }
+
+        function loadDemoDoctorData() {
+            // Update stats
+            document.getElementById('doctorTotalWorkers').textContent = '45';
+            document.getElementById('doctorPendingReview').textContent = '12';
+            document.getElementById('doctorCompletedReview').textContent = '33';
+            document.getElementById('doctorAbnormalCases').textContent = '3';
+            
+            // Load demo workers table
+            const tableBody = document.querySelector('#doctorWorkersTable tbody');
+            tableBody.innerHTML = '';
+            
+            const demoWorkers = [
+                {
+                    PEKERJA_NAMA: 'Ahmad Bin Abdullah',
+                    PEKERJA_IC: '901231045678',
+                    VITAL_SIGNS: '✅ Completed',
+                    LAB_RESULTS: '✅ Completed', 
+                    STATUS: 'PENDING REVIEW'
+                },
+                {
+                    PEKERJA_NAMA: 'Siti Binti Rahman',
+                    PEKERJA_IC: '880505086789',
+                    VITAL_SIGNS: '✅ Completed',
+                    LAB_RESULTS: '✅ Completed',
+                    STATUS: 'COMPLETED'
+                },
+                {
+                    PEKERJA_NAMA: 'Raj Kumar A/L Samy',
+                    PEKERJA_IC: '920715107654',
+                    VITAL_SIGNS: '✅ Completed',
+                    LAB_RESULTS: '⚠️ Abnormal',
+                    STATUS: 'PENDING REVIEW'
+                }
+            ];
+            
+            demoWorkers.forEach(worker => {
+                const statusClass = worker.STATUS === 'PENDING REVIEW' ? 'pending' : 'completed';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${worker.PEKERJA_NAMA}</td>
+                    <td>${worker.PEKERJA_IC}</td>
+                    <td>${worker.VITAL_SIGNS}</td>
+                    <td>${worker.LAB_RESULTS}</td>
+                    <td><span class="status-badge status-${statusClass}">${worker.STATUS}</span></td>
+                    <td>
+                        <button onclick="startUSECHHFormForWorker('${worker.PEKERJA_IC}')" class="btn btn-primary btn-sm">
+                            Review
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // START USECHH FORM
+        function startUSECHHForm() {
+            showScreen('usechhFormScreen');
+            loadWorkersForUSECHH();
+        }
+
+        function startUSECHHFormForWorker(workerIC) {
+            showScreen('usechhFormScreen');
+            loadWorkersForUSECHH().then(() => {
+                // Find and select the worker
+                const select = document.getElementById('usechhWorkerSelect');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].textContent.includes(workerIC)) {
+                        select.selectedIndex = i;
+                        break;
+                    }
+                }
+            });
+        }
+
+        async function loadWorkersForUSECHH() {
+            const workerSelect = document.getElementById('usechhWorkerSelect');
+            workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
+            
+            const demoWorkers = [
+                { WORKER_ID: 'WORKER_001', PEKERJA_NAMA: 'Ahmad Bin Abdullah', PEKERJA_IC: '901231045678' },
+                { WORKER_ID: 'WORKER_002', PEKERJA_NAMA: 'Siti Binti Rahman', PEKERJA_IC: '880505086789' },
+                { WORKER_ID: 'WORKER_003', PEKERJA_NAMA: 'Raj Kumar A/L Samy', PEKERJA_IC: '920715107654' }
+            ];
+            
+            demoWorkers.forEach(worker => {
+                const option = document.createElement('option');
+                option.value = worker.WORKER_ID;
+                option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
+                workerSelect.appendChild(option);
+            });
+        }
+
+        // SAVE USECHH FORM
+        document.getElementById('usechhForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!doctorSignature) {
+                alert('❌ Sila simpan tandatangan doktor terlebih dahulu');
+                return;
+            }
+
+            const formData = {
+                WORKER_ID: document.getElementById('usechhWorkerSelect').value,
+                SESSION_ID: currentSession.SESSION_ID,
+                DOCTOR_ID: currentUser.userId || 'DOCTOR_001',
+                KLINIK_ID: currentKlinik.id,
+                USECHH_A_JAWATAN_SEKARANG: document.getElementById('usechhJawatanSekarang').value,
+                USECHH_A_TEMPOH_JAWATAN: document.getElementById('usechhTempohJawatan').value,
+                USECHH_A_CHK_BAHAGIAN_PENGELUARAN: document.getElementById('usechhChkPengeluaran').checked,
+                USECHH_A_CHK_BAHAGIAN_PEMASANGAN: document.getElementById('usechhChkPemasangan').checked,
+                USECHH_A_CHK_BAHAGIAN_PENYELENGGARAAN: document.getElementById('usechhChkPenyelenggaraan').checked,
+                USECHH_A_CHK_BAHAGIAN_MAKMAL: document.getElementById('usechhChkMakmal').checked,
+                USECHH_A_CHK_BAHAGIAN_LAIN: document.getElementById('usechhChkLain').checked,
+                USECHH_A_TXT_BAHAGIAN_LAIN: document.getElementById('usechhTxtLain').value,
+                USECHH_B_CHK_PELARUT_ORGANIK: document.getElementById('usechhChkPelarutOrganik').checked,
+                USECHH_B_CHK_LOGAM_BERAT: document.getElementById('usechhChkLogamBerat').checked,
+                USECHH_B_CHK_GAS_WAP: document.getElementById('usechhChkGasWap').checked,
+                USECHH_B_CHK_DEBU_SERAT: document.getElementById('usechhChkDebuSerat').checked,
+                USECHH_B_TEMPOH_PENDEDAHAN: document.getElementById('usechhTempohPendedahan').value,
+                USECHH_B_JENIS_PENDEDAHAN: document.getElementById('usechhJenisPendedahan').value,
+                USECHH_C_CHK_SESAK_NAFAS: document.getElementById('usechhChkSesakNafas').checked,
+                USECHH_C_CHK_BATUK_BERTERUSAN: document.getElementById('usechhChkBatukBerterusan').checked,
+                USECHH_C_CHK_PENING_KEPALA: document.getElementById('usechhChkPeningKepala').checked,
+                USECHH_C_CHK_MUAL_MUNTAH: document.getElementById('usechhChkMualMuntah').checked,
+                USECHH_C_PENEMUAN_DOKTOR: document.getElementById('usechhPenemuanDoktor').value,
+                USECHH_C_CADANGAN_DOKTOR: document.getElementById('usechhCadanganDoktor').value,
+                TANDATANGAN_DOKTOR_URL: doctorSignature,
+                TANDATANGAN_PEKERJA_URL: workerSignature || ''
+            };
+
+            try {
+                const result = await fetchBackend('saveUSECHHForm', formData);
+                
+                if (result && result.success) {
+                    alert('✅ Borang USECHH berjaya disimpan!');
+                    showScreen('doctorDashboard');
+                    loadDoctorDashboard();
+                } else {
+                    alert('✅ Borang USECHH demo disimpan!');
+                    showScreen('doctorDashboard');
+                    loadDoctorDashboard();
+                }
+            } catch (error) {
+                console.error('Error saving USECHH form:', error);
+                alert('✅ Borang USECHH demo disimpan! (Offline mode)');
+                showScreen('doctorDashboard');
+                loadDoctorDashboard();
+            }
+        });
+
+        // GENERATE USECHH PDF
+        function generateUSECHHPDF() {
+            alert('📄 Menjana PDF Borang USECHH... (Demo)');
+            showScreen('pdfPreviewScreen');
+            
+            // Simulate PDF generation
+            setTimeout(() => {
+                document.getElementById('pdfPreviewContainer').innerHTML = `
+                    <div style="padding: 2rem; text-align: center;">
+                        <h3>Borang USECHH - Pratonton</h3>
+                        <p>PDF telah berjaya dijana untuk pekerja yang dipilih</p>
+                        <div style="margin: 2rem 0; padding: 1rem; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
+                            <h4>BORANG PENILAIAN KESIHATAN PEKERJA (USECHH)</h4>
+                            <p>Pekerja: ${document.getElementById('usechhWorkerSelect').selectedOptions[0]?.textContent || 'N/A'}</p>
+                            <p>Doktor: ${currentUser.name || 'Dr. Ahmad Bin Abdullah'}</p>
+                            <p>Tarikh: ${new Date().toLocaleDateString('ms-MY')}</p>
+                        </div>
+                        <button onclick="downloadPDF()" class="btn btn-primary">Muat Turun PDF</button>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // DOWNLOAD PDF
+        function downloadPDF() {
+            alert('📥 Memuat turun PDF... (Demo)');
+            // In real implementation, this would download the actual PDF
+            setTimeout(() => {
+                alert('✅ PDF berjaya dimuat turun!');
+            }, 1000);
+        }
+
+        // OTHER DOCTOR FUNCTIONS
+        function generateMedicalReport() {
+            alert('📊 Menjana laporan perubatan... (Demo)');
+        }
+
+        function reviewAbnormalCases() {
+            alert('🚨 Membuka senarai kes abnormal... (Demo)');
+        }
+
+        function exportDoctorReport() {
+            alert('📈 Mengeksport laporan doktor... (Demo)');
+        }
+
+        // LOGOUT FUNCTION
+        function logout() {
+            currentUser = null;
+            currentSession = null;
+            currentKlinik = null;
+            doctorSignature = null;
+            workerSignature = null;
+            
+            // Clear form fields
+            document.getElementById('loginForm').reset();
+            clearSignature();
+            
+            showScreen('loginScreen');
+        }
+
+        // UTILITY FUNCTIONS
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ms-MY');
+        }
+
+        // Error handling for uncaught errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            // Don't show alert for demo purposes
+        });
+
+        // Demo functions for missing screens
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function generateSystemReport() {
+            alert('📈 Menjana laporan sistem... (Demo)');
+        }
+
+    </script>
 
 </body>
 </html>

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Surveillance System</title>
     <link rel="stylesheet" href="style.css">
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- SheetJS untuk Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- Login Screen -->
@@ -17,102 +21,156 @@
             
             <div class="login-form">
                 <div class="form-group">
-                    <label for="clinicName">Nama Klinik:</label>
-                    <input type="text" id="clinicName" placeholder="Masukkan nama klinik">
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Kata Laluan:</label>
-                    <input type="password" id="password" placeholder="Masukkan kata laluan">
-                </div>
-                
-                <div class="form-group">
                     <label for="userRole">Peranan:</label>
-                    <select id="userRole">
-                        <option value="ma">Staff MA</option>
-                        <option value="doctor">Doktor</option>
+                    <select id="userRole" onchange="showRoleFields()">
+                        <option value="">Pilih Peranan</option>
                         <option value="admin">Admin</option>
+                        <option value="doctor">Doktor</option>
+                        <option value="ma">Medical Assistant</option>
                     </select>
+                </div>
+
+                <div id="adminFields" class="role-fields">
+                    <div class="form-group">
+                        <label for="adminName">Nama Admin:</label>
+                        <input type="text" id="adminName" placeholder="Nama admin">
+                    </div>
+                </div>
+
+                <div id="doctorFields" class="role-fields">
+                    <div class="form-group">
+                        <label for="doctorId">ID Doktor:</label>
+                        <input type="text" id="doctorId" placeholder="DR001">
+                    </div>
+                </div>
+
+                <div id="maFields" class="role-fields">
+                    <div class="form-group">
+                        <label for="maId">ID MA:</label>
+                        <input type="text" id="maId" placeholder="MA001">
+                    </div>
                 </div>
                 
                 <button onclick="login()" class="btn-primary">LOGIN</button>
             </div>
-            
-            <div class="login-footer">
-                <p>© 2024 Medical Surveillance System</p>
-            </div>
         </div>
     </div>
 
-    <!-- Dashboard Screen -->
-    <div id="dashboardScreen" class="screen">
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="screen">
         <div class="dashboard-header">
-            <h1>🏥 DASHBOARD UTAMA</h1>
-            <div class="user-info">
-                <span id="welcomeMessage">Selamat datang!</span>
-                <button onclick="logout()" class="btn-secondary">Logout</button>
-            </div>
+            <button onclick="logout()" class="btn-back">← Logout</button>
+            <h2>👨‍💼 ADMIN DASHBOARD</h2>
+            <span id="adminWelcome"></span>
         </div>
 
-        <!-- MA Staff Dashboard -->
-        <div id="maDashboard" class="role-dashboard">
-            <div class="dashboard-cards">
-                <div class="card" onclick="showScreen('usechhFormScreen')">
-                    <div class="card-icon">📝</div>
-                    <h3>Borang USECHH Baru</h3>
-                    <p>Isi borang USECHH untuk pekerja baru</p>
-                </div>
-                
-                <div class="card" onclick="showScreen('signatureScreen')">
-                    <div class="card-icon">✍️</div>
-                    <h3>Tandatangan Digital</h3>
-                    <p>Ambil tandatangan pekerja</p>
-                </div>
-                
-                <div class="card" onclick="showScreen('labReportScreen')">
-                    <div class="card-icon">📊</div>
-                    <h3>Upload Lab Report</h3>
-                    <p>Upload dan semak keputusan lab</p>
-                </div>
-                
-                <div class="card" onclick="showScreen('workerListScreen')">
-                    <div class="card-icon">👥</div>
-                    <h3>Senarai Pekerja</h3>
-                    <p>Lihat semua rekod pekerja</p>
+        <div class="dashboard-content">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h3>📤 Muat Naik Senarai Pekerja</h3>
+                <div class="upload-box">
+                    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="previewExcel()">
+                    <label for="excelFile" class="upload-label">
+                        📎 Pilih File Excel
+                    </label>
+                    <div id="filePreview"></div>
+                    <button onclick="uploadWorkers()" class="btn-primary" id="uploadBtn" disabled>Muat Naik</button>
                 </div>
             </div>
-        </div>
 
-        <!-- Doctor Dashboard -->
-        <div id="doctorDashboard" class="role-dashboard">
-            <div class="dashboard-cards">
-                <div class="card" onclick="showScreen('doctorReviewScreen')">
-                    <div class="card-icon">👨‍⚕️</div>
-                    <h3>Semak Rekod</h3>
-                    <p>Semak dan sahkan rekod pekerja</p>
-                </div>
-                
-                <div class="card" onclick="showScreen('pendingReviewScreen')">
-                    <div class="card-icon">⏳</div>
-                    <h3>Menunggu Semakan</h3>
-                    <p id="pendingCount">0 rekod</p>
-                </div>
-                
-                <div class="card" onclick="showScreen('completedScreen')">
-                    <div class="card-icon">✅</div>
-                    <h3>Selesai Disemak</h3>
-                    <p id="completedCount">0 rekod</p>
+            <!-- Company List -->
+            <div class="company-section">
+                <h3>🏢 Senarai Syarikat</h3>
+                <div id="companyList" class="company-grid">
+                    <!-- Dynamic company cards -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Other screens will be added here -->
-    <div id="usechhFormScreen" class="screen"></div>
-    <div id="signatureScreen" class="screen"></div>
-    <div id="labReportScreen" class="screen"></div>
-    <div id="doctorReviewScreen" class="screen"></div>
+    <!-- Doctor Dashboard -->
+    <div id="doctorDashboard" class="screen">
+        <div class="dashboard-header">
+            <button onclick="logout()" class="btn-back">← Logout</button>
+            <h2>👨‍⚕️ DOKTOR DASHBOARD</h2>
+            <span id="doctorWelcome"></span>
+        </div>
 
-    <script src="script.js"></script>
+        <div class="dashboard-content">
+            <div class="filter-section">
+                <input type="text" id="companySearch" placeholder="Cari syarikat..." onkeyup="filterCompanies()">
+                <select id="statusFilter" onchange="filterCompanies()">
+                    <option value="">Semua Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+
+            <div id="doctorCompanyList" class="company-grid">
+                <!-- Dynamic company cards for doctor -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Worker List Screen -->
+    <div id="workerListScreen" class="screen">
+        <div class="dashboard-header">
+            <button onclick="showScreen('doctorDashboard')" class="btn-back">← Kembali</button>
+            <h2 id="workerListTitle">👥 Senarai Pekerja</h2>
+        </div>
+
+        <div class="worker-container">
+            <div class="worker-table-container">
+                <table class="worker-table">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>No IC/Passport</th>
+                            <th>Jantina</th>
+                            <th>Status</th>
+                            <th>Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workerTableBody">
+                        <!-- Dynamic worker rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Signature Screen -->
+    <div id="qrSignatureScreen" class="screen">
+        <div class="dashboard-header">
+            <button onclick="showScreen('workerListScreen')" class="btn-back">← Kembali</button>
+            <h2>✍️ Tandatangan Digital</h2>
+        </div>
+
+        <div class="qr-container">
+            <div class="qr-info">
+                <h3 id="qrWorkerName"></h3>
+                <p id="qrWorkerIC"></p>
+            </div>
+            
+            <div class="qr-code-container">
+                <div id="qrcode"></div>
+                <p>📱 Scan QR code dengan device lain untuk tandatangan</p>
+            </div>
+
+            <div class="signature-preview">
+                <h4>Tandatangan Disimpan:</h4>
+                <img id="signaturePreview" src="" style="display: none; max-width: 300px; border: 1px solid #ddd;">
+                <p id="noSignatureText" style="color: #999;">Belum ada tandatangan</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include other script files -->
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/doctor.js"></script>
+    <script src="js/qr-signature.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

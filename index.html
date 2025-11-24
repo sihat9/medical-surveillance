@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Surveillance System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🏥 MEDICAL SURVEILLANCE SYSTEM</h1>
+                <p>Sistem Pengurusan Borang USECHH Digital</p>
+            </div>
+            
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="clinicName">Nama Klinik:</label>
+                    <input type="text" id="clinicName" placeholder="Masukkan nama klinik">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Kata Laluan:</label>
+                    <input type="password" id="password" placeholder="Masukkan kata laluan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userRole">Peranan:</label>
+                    <select id="userRole">
+                        <option value="ma">Staff MA</option>
+                        <option value="doctor">Doktor</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                
+                <button onclick="login()" class="btn-primary">LOGIN</button>
+            </div>
+            
+            <div class="login-footer">
+                <p>© 2024 Medical Surveillance System</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen">
+        <div class="dashboard-header">
+            <h1>🏥 DASHBOARD UTAMA</h1>
+            <div class="user-info">
+                <span id="welcomeMessage">Selamat datang!</span>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </div>
+
+        <!-- MA Staff Dashboard -->
+        <div id="maDashboard" class="role-dashboard">
+            <div class="dashboard-cards">
+                <div class="card" onclick="showScreen('usechhFormScreen')">
+                    <div class="card-icon">📝</div>
+                    <h3>Borang USECHH Baru</h3>
+                    <p>Isi borang USECHH untuk pekerja baru</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('signatureScreen')">
+                    <div class="card-icon">✍️</div>
+                    <h3>Tandatangan Digital</h3>
+                    <p>Ambil tandatangan pekerja</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('labReportScreen')">
+                    <div class="card-icon">📊</div>
+                    <h3>Upload Lab Report</h3>
+                    <p>Upload dan semak keputusan lab</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('workerListScreen')">
+                    <div class="card-icon">👥</div>
+                    <h3>Senarai Pekerja</h3>
+                    <p>Lihat semua rekod pekerja</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Dashboard -->
+        <div id="doctorDashboard" class="role-dashboard">
+            <div class="dashboard-cards">
+                <div class="card" onclick="showScreen('doctorReviewScreen')">
+                    <div class="card-icon">👨‍⚕️</div>
+                    <h3>Semak Rekod</h3>
+                    <p>Semak dan sahkan rekod pekerja</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('pendingReviewScreen')">
+                    <div class="card-icon">⏳</div>
+                    <h3>Menunggu Semakan</h3>
+                    <p id="pendingCount">0 rekod</p>
+                </div>
+                
+                <div class="card" onclick="showScreen('completedScreen')">
+                    <div class="card-icon">✅</div>
+                    <h3>Selesai Disemak</h3>
+                    <p id="completedCount">0 rekod</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other screens will be added here -->
+    <div id="usechhFormScreen" class="screen"></div>
+    <div id="signatureScreen" class="screen"></div>
+    <div id="labReportScreen" class="screen"></div>
+    <div id="doctorReviewScreen" class="screen"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

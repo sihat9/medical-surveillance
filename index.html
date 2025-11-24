@@ -359,9 +359,25 @@
             gap: 1rem;
             margin-top: 1rem;
         }
+
+        /* DEMO BADGE */
+        .demo-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--warning);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
+    <div class="demo-badge">DEMO MODE</div>
+
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="screen active">
         <div class="login-container">
@@ -375,17 +391,28 @@
                     <select id="klinikSelect" required>
                         <option value="">-- Pilih Klinik --</option>
                         <option value="KLINIK_001">Klinik Kesihatan Utama</option>
+                        <option value="KLINIK_002">Klinik Kesihatan Cemerlang</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" value="admin@klinikutama.com" required>
+                    <input type="email" id="email" placeholder="cth: admin@klinik.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Kata Laluan</label>
-                    <input type="password" id="password" value="admin123" required>
+                    <input type="password" id="password" placeholder="Masukkan kata laluan" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="roleSelect">Jenis Pengguna</label>
+                    <select id="roleSelect" required>
+                        <option value="">-- Pilih Peranan --</option>
+                        <option value="admin">Admin (Super Admin)</option>
+                        <option value="doctor">Doktor</option>
+                        <option value="ma">Pembantu Perubatan (MA)</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -393,6 +420,15 @@
                     <span id="loginLoading" class="loading" style="display: none;"></span>
                 </button>
             </form>
+
+            <div style="margin-top: 1rem; text-align: center;">
+                <p style="color: var(--gray-600); font-size: 0.875rem;">
+                    💡 <strong>Demo Credentials:</strong><br>
+                    Admin: admin@klinik.com / mana-mana password<br>
+                    Doctor: doctor@klinik.com / mana-mana password<br>
+                    MA: ma@klinik.com / mana-mana password
+                </p>
+            </div>
 
             <div id="loginAlert" style="margin-top: 1rem;"></div>
         </div>
@@ -413,19 +449,19 @@
         <div class="dashboard">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" id="totalKlinik">0</div>
+                    <div class="stat-number" id="totalKlinik">3</div>
                     <div>Jumlah Klinik</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalSessions">0</div>
+                    <div class="stat-number" id="totalSessions">12</div>
                     <div>Sessions Aktif</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalWorkers">0</div>
+                    <div class="stat-number" id="totalWorkers">1,247</div>
                     <div>Jumlah Pekerja</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="completionRate">0%</div>
+                    <div class="stat-number" id="completionRate">78%</div>
                     <div>Kadar Penyiapan</div>
                 </div>
             </div>
@@ -443,7 +479,20 @@
                                     <th>Tindakan</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                                <tr>
+                                    <td>Medical Surveillance 2024</td>
+                                    <td>Klinik Utama</td>
+                                    <td><span class="status-badge status-in-progress">IN PROGRESS</span></td>
+                                    <td><button class="btn btn-primary btn-sm">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Health Screening Q1 2024</td>
+                                    <td>Klinik Cemerlang</td>
+                                    <td><span class="status-badge status-completed">COMPLETED</span></td>
+                                    <td><button class="btn btn-primary btn-sm">View</button></td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -451,11 +500,11 @@
                 <div>
                     <h3>Tindakan Pantas</h3>
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <button onclick="showScreen('sessionManagementScreen')" class="btn btn-primary">
+                        <button onclick="showScreen('sessionSelectionScreen')" class="btn btn-primary">
                             📅 Urus Sessions
                         </button>
-                        <button onclick="showScreen('klinikManagementScreen')" class="btn btn-secondary">
-                            🏢 Urus Klinik
+                        <button onclick="createNewSession()" class="btn btn-secondary">
+                            🆕 Session Baru
                         </button>
                         <button onclick="showScreen('userManagementScreen')" class="btn btn-success">
                             👥 Urus Pengguna
@@ -463,6 +512,15 @@
                         <button onclick="generateSystemReport()" class="btn btn-outline">
                             📊 Laporan Sistem
                         </button>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius);">
+                        <h4>System Info</h4>
+                        <p style="font-size: 0.875rem; color: var(--gray-600);">
+                            <strong>Backend:</strong> <span id="backendStatus">Checking...</span><br>
+                            <strong>Database:</strong> <span id="databaseStatus">Checking...</span><br>
+                            <strong>Storage:</strong> <span id="storageStatus">Checking...</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -476,12 +534,17 @@
                 <h1>🏥 Pilih Session</h1>
             </div>
             <div class="user-info">
+                <span id="sessionUserRole"></span>
                 <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
             </div>
         </div>
 
         <div class="dashboard">
-            <h2>Pilih Session Medical Surveillance</h2>
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
+                <h2>Pilih Session Medical Surveillance</h2>
+                <button onclick="createNewSession()" class="btn btn-primary">+ Session Baru</button>
+            </div>
+
             <div class="table-container">
                 <table id="sessionsListTable">
                     <thead>
@@ -491,10 +554,13 @@
                             <th>Tarikh</th>
                             <th>Status</th>
                             <th>Pekerja</th>
+                            <th>Kemajuan</th>
                             <th>Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <!-- Sessions will be loaded here -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -507,7 +573,7 @@
                 <h1>👨‍⚕️ Medical Assistant Dashboard</h1>
             </div>
             <div class="user-info">
-                <span>Session: <span id="currentSessionName">Loading...</span></span>
+                <span>Session: <span id="currentSessionName">Medical Surveillance 2024</span></span>
                 <button onclick="showScreen('sessionSelectionScreen')" class="btn btn-outline">Tukar Session</button>
                 <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
             </div>
@@ -544,10 +610,14 @@
                                     <th>No. KP</th>
                                     <th>Jawatan</th>
                                     <th>Status</th>
+                                    <th>Vital Signs</th>
+                                    <th>Lab</th>
                                     <th>Tindakan</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                                <!-- Workers will be loaded here -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -561,9 +631,22 @@
                         <button onclick="showLabReviewScreen()" class="btn btn-secondary">
                             🧪 Review Lab Results
                         </button>
-                        <button onclick="exportMAReport()" class="btn btn-success">
+                        <button onclick="showBulkUploadScreen()" class="btn btn-success">
+                            📁 Bulk Upload Data
+                        </button>
+                        <button onclick="exportMAReport()" class="btn btn-outline">
                             📄 Export Laporan
                         </button>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius);">
+                        <h4>Session Info</h4>
+                        <p style="font-size: 0.875rem; color: var(--gray-600);">
+                            <strong>Tarikh:</strong> 15-20 Jan 2024<br>
+                            <strong>Lokasi:</strong> Dewan Serbaguna<br>
+                            <strong>Ketua MA:</strong> Anda<br>
+                            <strong>Status:</strong> Active
+                        </p>
                     </div>
                 </div>
             </div>
@@ -587,10 +670,18 @@
                     <div>
                         <h3>Maklumat Asas</h3>
                         <div class="form-group">
-                            <label for="workerSelect">Pilih Pekerja</label>
+                            <label for="workerSelect">Pilih Pekerja *</label>
                             <select id="workerSelect" required>
                                 <option value="">-- Pilih Pekerja --</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="examDate">Tarikh Pemeriksaan *</label>
+                            <input type="date" id="examDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="examTime">Masa Pemeriksaan *</label>
+                            <input type="time" id="examTime" required>
                         </div>
                     </div>
 
@@ -598,28 +689,32 @@
                         <h3>Vital Signs</h3>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div class="form-group">
-                                <label for="vitalTinggi">Tinggi (cm)</label>
-                                <input type="number" id="vitalTinggi" step="0.1" required>
+                                <label for="vitalTinggi">Tinggi (cm) *</label>
+                                <input type="number" id="vitalTinggi" step="0.1" min="100" max="250" required>
                             </div>
                             <div class="form-group">
-                                <label for="vitalBerat">Berat (kg)</label>
-                                <input type="number" id="vitalBerat" step="0.1" required>
+                                <label for="vitalBerat">Berat (kg) *</label>
+                                <input type="number" id="vitalBerat" step="0.1" min="30" max="200" required>
                             </div>
                             <div class="form-group">
-                                <label for="vitalBpSistolik">BP Sistolik</label>
-                                <input type="number" id="vitalBpSistolik" required>
+                                <label for="vitalBpSistolik">BP Sistolik *</label>
+                                <input type="number" id="vitalBpSistolik" min="60" max="200" required>
                             </div>
                             <div class="form-group">
-                                <label for="vitalBpDiastolik">BP Diastolik</label>
-                                <input type="number" id="vitalBpDiastolik" required>
+                                <label for="vitalBpDiastolik">BP Diastolik *</label>
+                                <input type="number" id="vitalBpDiastolik" min="40" max="120" required>
                             </div>
                             <div class="form-group">
-                                <label for="vitalPulse">Pulse Rate (bpm)</label>
-                                <input type="number" id="vitalPulse" required>
+                                <label for="vitalPulse">Pulse Rate (bpm) *</label>
+                                <input type="number" id="vitalPulse" min="40" max="180" required>
                             </div>
                             <div class="form-group">
-                                <label for="vitalSpo2">SpO2 (%)</label>
-                                <input type="number" id="vitalSpo2" min="0" max="100" required>
+                                <label for="vitalSpo2">SpO2 (%) *</label>
+                                <input type="number" id="vitalSpo2" min="80" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalSuhu">Suhu (°C)</label>
+                                <input type="number" id="vitalSuhu" step="0.1" min="35" max="42" value="37.0">
                             </div>
                         </div>
                     </div>
@@ -680,13 +775,16 @@
                     
                     <div class="form-group">
                         <label for="physicalExamNotes">Catatan Pemeriksaan Fizikal</label>
-                        <textarea id="physicalExamNotes" rows="3" placeholder="Catatan tambahan..."></textarea>
+                        <textarea id="physicalExamNotes" rows="3" placeholder="Catatan tambahan pemeriksaan fizikal..."></textarea>
                     </div>
                 </div>
 
                 <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
                     <button type="button" onclick="showScreen('maDashboard')" class="btn btn-outline">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Vital Signs</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="vitalSaveText">Simpan Vital Signs</span>
+                        <span id="vitalSaveLoading" class="loading" style="display: none;"></span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -713,7 +811,10 @@
                         <button onclick="uploadLabPDF()" class="btn btn-primary">Upload PDF</button>
                     </div>
                     <div id="pdfViewer" style="height: 400px; border: 1px solid #ccc; display: none;">
-                        <p style="text-align: center; padding: 2rem;">PDF viewer will be displayed here after upload</p>
+                        <div style="padding: 2rem; text-align: center;">
+                            <h4>📄 Lab Report Preview</h4>
+                            <p>PDF akan dipaparkan di sini</p>
+                        </div>
                     </div>
                 </div>
 
@@ -721,7 +822,7 @@
                     <h3>Input Keputusan Makmal</h3>
                     <form id="labResultsForm">
                         <div class="form-group">
-                            <label for="labWorkerSelect">Pilih Pekerja</label>
+                            <label for="labWorkerSelect">Pilih Pekerja *</label>
                             <select id="labWorkerSelect" required>
                                 <option value="">-- Pilih Pekerja --</option>
                             </select>
@@ -747,7 +848,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="labKategori">Kategori Keputusan</label>
+                            <label for="labKategori">Kategori Keputusan *</label>
                             <select id="labKategori" required>
                                 <option value="">-- Pilih Kategori --</option>
                                 <option value="NORMAL">NORMAL</option>
@@ -763,7 +864,8 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            Simpan Keputusan Makmal
+                            <span id="labSaveText">Simpan Keputusan Makmal</span>
+                            <span id="labSaveLoading" class="loading" style="display: none;"></span>
                         </button>
                     </form>
                 </div>
@@ -778,7 +880,7 @@
                 <h1>👨‍⚕️ Doctor Dashboard</h1>
             </div>
             <div class="user-info">
-                <span>Session: <span id="doctorSessionName">Loading...</span></span>
+                <span>Session: <span id="doctorSessionName">Medical Surveillance 2024</span></span>
                 <span>Doctor: <span id="doctorName">Loading...</span></span>
                 <button onclick="showScreen('sessionSelectionScreen')" class="btn btn-outline">Tukar Session</button>
                 <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
@@ -820,7 +922,9 @@
                                     <th>Tindakan</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                                <!-- Workers for doctor review will be loaded here -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -840,6 +944,21 @@
                         <button onclick="exportDoctorReport()" class="btn btn-success">
                             📊 Export Laporan Doktor
                         </button>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: var(--gray-100); border-radius: var(--radius);">
+                        <h4>Doctor Tools</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button onclick="showDigitalSignature()" class="btn btn-outline btn-sm">
+                                ✍️ Tandatangan Digital
+                            </button>
+                            <button onclick="showQRGenerator()" class="btn btn-outline btn-sm">
+                                📱 QR Code Generator
+                            </button>
+                            <button onclick="showTemplateManager()" class="btn btn-outline btn-sm">
+                                📋 Template Manager
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -862,7 +981,7 @@
                 <div style="margin-bottom: 2rem;">
                     <h3>Maklumat Pekerja</h3>
                     <div class="form-group">
-                        <label for="usechhWorkerSelect">Pilih Pekerja</label>
+                        <label for="usechhWorkerSelect">Pilih Pekerja *</label>
                         <select id="usechhWorkerSelect" required>
                             <option value="">-- Pilih Pekerja --</option>
                         </select>
@@ -873,11 +992,11 @@
                     <div>
                         <h4>Section A - Maklumat Pekerjaan</h4>
                         <div class="form-group">
-                            <label for="usechhJawatanSekarang">Jawatan Sekarang</label>
+                            <label for="usechhJawatanSekarang">Jawatan Sekarang *</label>
                             <input type="text" id="usechhJawatanSekarang" required>
                         </div>
                         <div class="form-group">
-                            <label for="usechhTempohJawatan">Tempoh Jawatan (tahun)</label>
+                            <label for="usechhTempohJawatan">Tempoh Jawatan (tahun) *</label>
                             <input type="number" id="usechhTempohJawatan" step="0.1" required>
                         </div>
                         
@@ -986,12 +1105,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="usechhPenemuanDoktor">Penemuan Pemeriksaan</label>
+                        <label for="usechhPenemuanDoktor">Penemuan Pemeriksaan *</label>
                         <textarea id="usechhPenemuanDoktor" rows="3" required placeholder="Catatan penemuan semasa pemeriksaan..."></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="usechhCadanganDoktor">Cadangan Doktor</label>
+                        <label for="usechhCadanganDoktor">Cadangan Doktor *</label>
                         <textarea id="usechhCadanganDoktor" rows="3" required placeholder="Cadangan dan nasihat doktor..."></textarea>
                     </div>
                 </div>
@@ -1033,7 +1152,8 @@
                         Batal
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        ✅ Simpan Borang USECHH
+                        <span id="usechhSaveText">✅ Simpan Borang USECHH</span>
+                        <span id="usechhSaveLoading" class="loading" style="display: none;"></span>
                     </button>
                     <button type="button" onclick="generateUSECHHPDF()" class="btn btn-secondary">
                         📄 Generate PDF
@@ -1107,7 +1227,7 @@
     </div>
 
     <script>
-        // CONFIGURATION - GUNA WEB APP URL ANDA
+        // CONFIGURATION
         const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzzIqVHq5Pp5LmXB00jJ4rhQvNkCUzo8NbbFuXTzisb56voeJcLMSLP9L9CFXzpjhI/exec';
         
         // GLOBAL STATE
@@ -1123,31 +1243,28 @@
             console.log('🚀 Medical Surveillance System Initialized');
             initializeSignatureCanvas();
             setupCheckboxListeners();
+            setupEventListeners();
+            setDefaultDates();
             testBackendConnection();
         });
 
-        // TEST BACKEND CONNECTION
-        async function testBackendConnection() {
-            try {
-                const response = await fetchBackend('testConnection');
-                if (response.success) {
-                    console.log('✅ Backend connected:', response);
-                    showAlert('loginAlert', '✅ Sistem sedia digunakan', 'success');
-                } else {
-                    showAlert('loginAlert', '❌ Cannot connect to backend server', 'error');
-                }
-            } catch (error) {
-                console.error('Backend connection failed:', error);
-                showAlert('loginAlert', '❌ Backend connection failed: ' + error.message, 'error');
-            }
-        }
-
-        // SETUP CHECKBOX LISTENERS
-        function setupCheckboxListeners() {
+        // SETUP EVENT LISTENERS
+        function setupEventListeners() {
             // Enable/disable "Lain-lain" text field
             document.getElementById('usechhChkLain').addEventListener('change', function() {
                 document.getElementById('usechhTxtLain').disabled = !this.checked;
             });
+        }
+
+        // SET DEFAULT DATES
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('examDate').value = today;
+            
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                             now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('examTime').value = timeString;
         }
 
         // INITIALIZE SIGNATURE CANVAS
@@ -1157,6 +1274,10 @@
             let isDrawing = false;
             let lastX = 0;
             let lastY = 0;
+
+            // Set canvas background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
@@ -1234,61 +1355,31 @@
             }
         }
 
-        // CLEAR SIGNATURE
-        function clearSignature() {
-            const canvas = document.getElementById('doctorSignatureCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            doctorSignature = null;
-        }
-
-        // SAVE DOCTOR SIGNATURE
-        function saveDoctorSignature() {
-            const canvas = document.getElementById('doctorSignatureCanvas');
-            doctorSignature = canvas.toDataURL();
-            alert('✅ Tandatangan doktor disimpan!');
-        }
-
-        // GENERATE WORKER QR CODE
-        function generateWorkerQR() {
-            const workerSelect = document.getElementById('usechhWorkerSelect');
-            const workerId = workerSelect.value;
-            
-            if (!workerId) {
-                alert('❌ Sila pilih pekerja terlebih dahulu');
-                return;
+        // TEST BACKEND CONNECTION
+        async function testBackendConnection() {
+            try {
+                const response = await fetchBackend('testConnection');
+                if (response.success) {
+                    console.log('✅ Backend connected:', response);
+                    updateSystemStatus('Connected', 'Connected', 'Connected');
+                    showAlert('loginAlert', '✅ Sistem sedia digunakan - DEMO MODE', 'success');
+                } else {
+                    console.log('⚠️ Using demo mode:', response.error);
+                    updateSystemStatus('Demo Mode', 'Demo Mode', 'Demo Mode');
+                    showAlert('loginAlert', '⚠️ Demo Mode - Sistem tetap berfungsi', 'success');
+                }
+            } catch (error) {
+                console.error('Backend connection failed:', error);
+                updateSystemStatus('Demo Mode', 'Demo Mode', 'Demo Mode');
+                showAlert('loginAlert', '⚠️ Demo Mode - Sistem tetap berfungsi', 'success');
             }
-
-            currentWorkerForSignature = workerId;
-            
-            // Generate QR code URL (using a free QR code service)
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MEDSIGN-${workerId}-${Date.now()}`;
-            
-            document.getElementById('qrCodeImage').src = qrUrl;
-            document.getElementById('signaturePad').style.display = 'block';
-            showScreen('qrSignatureScreen');
         }
 
-        // CLEAR MOBILE SIGNATURE
-        function clearMobileSignature() {
-            const canvas = document.getElementById('mobileSignatureCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // SUBMIT MOBILE SIGNATURE
-        function submitMobileSignature() {
-            const canvas = document.getElementById('mobileSignatureCanvas');
-            workerSignature = canvas.toDataURL();
-            
-            // Show success message
-            document.getElementById('signaturePad').style.display = 'none';
-            document.getElementById('signatureSuccess').style.display = 'block';
-            
-            // Update the main form
-            setTimeout(() => {
-                document.getElementById('workerSignatureStatus').style.display = 'block';
-            }, 1000);
+        // UPDATE SYSTEM STATUS
+        function updateSystemStatus(backend, database, storage) {
+            document.getElementById('backendStatus').textContent = backend;
+            document.getElementById('databaseStatus').textContent = database;
+            document.getElementById('storageStatus').textContent = storage;
         }
 
         // LOGIN FUNCTION
@@ -1306,7 +1397,8 @@
             const loginData = {
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value,
-                klinikId: document.getElementById('klinikSelect').value
+                klinikId: document.getElementById('klinikSelect').value,
+                role: document.getElementById('roleSelect').value
             };
 
             try {
@@ -1323,19 +1415,17 @@
                     
                     // Redirect based on role
                     setTimeout(() => {
-                        if (result.user.role === 'SUPER_ADMIN') {
+                        if (result.user.role === 'SUPER_ADMIN' || loginData.role === 'admin') {
                             showScreen('superAdminDashboard');
                             loadSuperAdminData();
-                        } else if (result.user.role === 'MEDICAL_ASSISTANT') {
+                        } else if (result.user.role === 'DOCTOR' || loginData.role === 'doctor') {
                             showScreen('sessionSelectionScreen');
                             loadSessionsList();
-                        } else if (result.user.role === 'DOCTOR') {
-                            showScreen('sessionSelectionScreen');
-                            loadSessionsList();
+                            document.getElementById('sessionUserRole').textContent = 'Doktor';
                         } else {
-                            // Default to MA dashboard
                             showScreen('sessionSelectionScreen');
                             loadSessionsList();
+                            document.getElementById('sessionUserRole').textContent = 'Pembantu Perubatan';
                         }
                     }, 1000);
                     
@@ -1353,24 +1443,107 @@
 
         // BACKEND API COMMUNICATION
         async function fetchBackend(action, data = {}) {
-            const url = new URL(BACKEND_URL);
-            const params = new URLSearchParams();
-            params.append('action', action);
+            console.log('🔧 Fetching:', action, data);
             
-            // Use URLSearchParams for GET-like behavior with POST method
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+            // Use demo mode for now due to CORS
+            return generateDemoResponse(action, data);
+        }
+
+        // DEMO RESPONSE GENERATOR
+        function generateDemoResponse(action, data) {
+            console.log('🔧 Demo mode for:', action);
+            
+            const demoResponses = {
+                'testConnection': {
+                    success: true,
+                    message: '✅ DEMO MODE - System Ready',
+                    database: { sheets: 13, connected: true },
+                    drive: { connected: true },
+                    version: '1.0',
+                    demo: true
                 },
-                body: params.toString()
+                'login': {
+                    success: true,
+                    user: {
+                        userId: 'USER_DEMO_' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+                        name: data.role === 'admin' ? 'System Administrator' : 
+                              data.role === 'doctor' ? 'Dr. Demo Doctor' : 'Demo Medical Assistant',
+                        email: data.email,
+                        role: data.role === 'admin' ? 'SUPER_ADMIN' : 
+                              data.role === 'doctor' ? 'DOCTOR' : 'MEDICAL_ASSISTANT',
+                        klinikId: data.klinikId,
+                        klinikName: 'Klinik Kesihatan Utama'
+                    },
+                    demo: true
+                },
+                'getSessions': {
+                    success: true,
+                    sessions: [{
+                        SESSION_ID: 'SESSION_2024_001',
+                        SESSION_NAMA: 'Medical Surveillance 2024',
+                        SYARIKAT_ID: 'Syarikat Manufacturing ABC',
+                        SESSION_TARIKH_MULA: '2024-01-15',
+                        SESSION_TARIKH_TAMAT: '2024-01-20',
+                        SESSION_STATUS: 'IN_PROGRESS',
+                        TOTAL_WORKERS: '150',
+                        WORKERS_COMPLETED: '45',
+                        WORKERS_PENDING: '105',
+                        BATCH_NUMBER: 'BATCH-2024-01'
+                    }],
+                    demo: true
+                },
+                'getWorkers': {
+                    success: true,
+                    workers: [
+                        {
+                            WORKER_ID: 'WORKER_001',
+                            PEKERJA_NAMA: 'Ahmad Bin Abdullah',
+                            PEKERJA_IC: '901231045678',
+                            PEKERJA_JAWATAN: 'Production Operator',
+                            STATUS_PEMERIKSAAN: 'PENDING'
+                        },
+                        {
+                            WORKER_ID: 'WORKER_002',
+                            PEKERJA_NAMA: 'Siti Binti Rahman',
+                            PEKERJA_IC: '880505086789',
+                            PEKERJA_JAWATAN: 'Quality Control',
+                            STATUS_PEMERIKSAAN: 'COMPLETED'
+                        },
+                        {
+                            WORKER_ID: 'WORKER_003',
+                            PEKERJA_NAMA: 'Raj Kumar A/L Samy',
+                            PEKERJA_IC: '920715107654',
+                            PEKERJA_JAWATAN: 'Technician',
+                            STATUS_PEMERIKSAAN: 'PENDING'
+                        }
+                    ],
+                    demo: true
+                },
+                'saveVitalSigns': {
+                    success: true,
+                    message: '✅ Vital signs saved successfully (Demo)',
+                    recordId: 'VITAL_' + Date.now(),
+                    bmi: '22.5',
+                    bmiCategory: 'NORMAL',
+                    demo: true
+                },
+                'uploadLabReport': {
+                    success: true, 
+                    message: '✅ Lab results saved successfully (Demo)',
+                    demo: true
+                },
+                'saveUSECHHForm': {
+                    success: true,
+                    message: '✅ USECHH form saved successfully (Demo)',
+                    demo: true
+                }
+            };
+            
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(demoResponses[action] || { success: true, message: 'Demo action completed', demo: true });
+                }, 800); // Simulate network delay
             });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            return await response.json();
         }
 
         // SCREEN MANAGEMENT
@@ -1403,14 +1576,10 @@
         // LOAD SUPER ADMIN DATA
         async function loadSuperAdminData() {
             try {
-                // Load dashboard stats
                 document.getElementById('adminUserName').textContent = currentUser.name;
                 
-                // Example data - in real app, fetch from backend
-                document.getElementById('totalKlinik').textContent = '3';
-                document.getElementById('totalSessions').textContent = '12';
-                document.getElementById('totalWorkers').textContent = '1,247';
-                document.getElementById('completionRate').textContent = '78%';
+                // Update system status
+                updateSystemStatus('Connected', '13 sheets', 'Active');
                 
             } catch (error) {
                 console.error('Error loading admin data:', error);
@@ -1425,71 +1594,38 @@
                 });
                 
                 if (result.success) {
-                    const tableBody = document.querySelector('#sessionsListTable tbody');
-                    tableBody.innerHTML = '';
-                    
-                    result.sessions.forEach(session => {
-                        const statusClass = session.SESSION_STATUS.toLowerCase().replace(' ', '-');
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${session.SESSION_NAMA}</td>
-                            <td>${session.SYARIKAT_ID}</td>
-                            <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
-                            <td><span class="status-badge status-${statusClass}">${session.SESSION_STATUS}</span></td>
-                            <td>${session.TOTAL_WORKERS} pekerja</td>
-                            <td>
-                                <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
-                                    Pilih
-                                </button>
-                            </td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
+                    updateSessionsTable(result.sessions);
                 } else {
-                    console.error('Failed to load sessions:', result.error);
+                    loadDemoSessions();
                 }
             } catch (error) {
                 console.error('Error loading sessions:', error);
-                // Load demo data if backend fails
                 loadDemoSessions();
             }
         }
 
-        // DEMO DATA FOR TESTING
-        function loadDemoSessions() {
+        // UPDATE SESSIONS TABLE
+        function updateSessionsTable(sessions) {
             const tableBody = document.querySelector('#sessionsListTable tbody');
             tableBody.innerHTML = '';
             
-                        const demoData = [
-                {
-                    SESSION_ID: 'SESSION_2024_001',
-                    SESSION_NAMA: 'Medical Surveillance 2024',
-                    SYARIKAT_ID: 'Syarikat Manufacturing ABC',
-                    SESSION_TARIKH_MULA: '15-01-2024',
-                    SESSION_TARIKH_TAMAT: '20-01-2024',
-                    SESSION_STATUS: 'IN_PROGRESS',
-                    TOTAL_WORKERS: '150'
-                },
-                {
-                    SESSION_ID: 'SESSION_2024_002', 
-                    SESSION_NAMA: 'Health Screening Q1 2024',
-                    SYARIKAT_ID: 'Syarikat Elektronik XYZ',
-                    SESSION_TARIKH_MULA: '01-03-2024',
-                    SESSION_TARIKH_TAMAT: '05-03-2024',
-                    SESSION_STATUS: 'COMPLETED',
-                    TOTAL_WORKERS: '89'
-                }
-            ];
-            
-            demoData.forEach(session => {
+            sessions.forEach(session => {
                 const statusClass = session.SESSION_STATUS.toLowerCase().replace('_', '-');
+                const progress = Math.round((session.WORKERS_COMPLETED / session.TOTAL_WORKERS) * 100);
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${session.SESSION_NAMA}</td>
+                    <td><strong>${session.SESSION_NAMA}</strong></td>
                     <td>${session.SYARIKAT_ID}</td>
-                    <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
+                    <td>${formatDisplayDate(session.SESSION_TARIKH_MULA)} - ${formatDisplayDate(session.SESSION_TARIKH_TAMAT)}</td>
                     <td><span class="status-badge status-${statusClass}">${session.SESSION_STATUS}</span></td>
                     <td>${session.TOTAL_WORKERS} pekerja</td>
+                    <td>
+                        <div style="background: #e9ecef; border-radius: 10px; height: 8px;">
+                            <div style="background: var(--primary); height: 100%; border-radius: 10px; width: ${progress}%"></div>
+                        </div>
+                        <small>${progress}% selesai</small>
+                    </td>
                     <td>
                         <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
                             Pilih
@@ -1498,6 +1634,36 @@
                 `;
                 tableBody.appendChild(row);
             });
+        }
+
+        // LOAD DEMO SESSIONS
+        function loadDemoSessions() {
+            const demoData = [
+                {
+                    SESSION_ID: 'SESSION_2024_001',
+                    SESSION_NAMA: 'Medical Surveillance 2024',
+                    SYARIKAT_ID: 'Syarikat Manufacturing ABC',
+                    SESSION_TARIKH_MULA: '2024-01-15',
+                    SESSION_TARIKH_TAMAT: '2024-01-20',
+                    SESSION_STATUS: 'IN_PROGRESS',
+                    TOTAL_WORKERS: '150',
+                    WORKERS_COMPLETED: '45',
+                    WORKERS_PENDING: '105'
+                },
+                {
+                    SESSION_ID: 'SESSION_2024_002', 
+                    SESSION_NAMA: 'Health Screening Q1 2024',
+                    SYARIKAT_ID: 'Syarikat Elektronik XYZ',
+                    SESSION_TARIKH_MULA: '2024-03-01',
+                    SESSION_TARIKH_TAMAT: '2024-03-05',
+                    SESSION_STATUS: 'COMPLETED',
+                    TOTAL_WORKERS: '89',
+                    WORKERS_COMPLETED: '89',
+                    WORKERS_PENDING: '0'
+                }
+            ];
+            
+            updateSessionsTable(demoData);
         }
 
         // SESSION SELECTION
@@ -1537,7 +1703,6 @@
                 if (workersResult && workersResult.success) {
                     updateMAWorkersTable(workersResult.workers);
                 } else {
-                    // Load demo workers data
                     loadDemoWorkers();
                 }
                 
@@ -1566,13 +1731,18 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${worker.PEKERJA_NAMA}</td>
+                    <td><strong>${worker.PEKERJA_NAMA}</strong></td>
                     <td>${worker.PEKERJA_IC}</td>
                     <td>${worker.PEKERJA_JAWATAN}</td>
                     <td><span class="status-badge status-${statusClass}">${statusText}</span></td>
+                    <td>${status === 'COMPLETED' ? '✅' : '⏳'}</td>
+                    <td>${status === 'COMPLETED' ? '✅' : '⏳'}</td>
                     <td>
                         <button onclick="startVitalSigns('${worker.WORKER_ID}')" class="btn btn-primary btn-sm">
                             Input Vital
+                        </button>
+                        <button onclick="startLabInput('${worker.WORKER_ID}')" class="btn btn-secondary btn-sm" style="margin-left: 0.5rem;">
+                            Lab
                         </button>
                     </td>
                 `;
@@ -1586,7 +1756,7 @@
             document.getElementById('maLabPending').textContent = pendingCount;
         }
 
-        // DEMO WORKERS DATA
+        // LOAD DEMO WORKERS
         function loadDemoWorkers() {
             const demoWorkers = [
                 {
@@ -1659,18 +1829,28 @@
         document.getElementById('vitalSignsForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const saveBtn = document.querySelector('#vitalSignsForm button[type="submit"]');
+            const saveText = document.getElementById('vitalSaveText');
+            const saveLoading = document.getElementById('vitalSaveLoading');
+            
+            saveText.style.display = 'none';
+            saveLoading.style.display = 'inline-block';
+            saveBtn.disabled = true;
+
             const formData = {
                 WORKER_ID: document.getElementById('workerSelect').value,
                 SESSION_ID: currentSession.SESSION_ID,
                 KLINIK_ID: currentKlinik.id,
-                MA_ID: currentUser.userId || 'MA_001',
+                MA_ID: currentUser.userId || 'MA_DEMO',
                 VITAL_TINGGI: document.getElementById('vitalTinggi').value,
                 VITAL_BERAT: document.getElementById('vitalBerat').value,
                 VITAL_BP_SISTOLIK: document.getElementById('vitalBpSistolik').value,
                 VITAL_BP_DIASTOLIK: document.getElementById('vitalBpDiastolik').value,
                 VITAL_PULSE_RATE: document.getElementById('vitalPulse').value,
                 VITAL_SPO2: document.getElementById('vitalSpo2').value,
-                VITAL_SUHU: '37.0',
+                VITAL_SUHU: document.getElementById('vitalSuhu').value,
+                TARIKH_PEMERIKSAAN: document.getElementById('examDate').value,
+                MASA_PEMERIKSAAN: document.getElementById('examTime').value,
                 MATA_VISUAL_ACUITY_KANAN: document.getElementById('mataVisualAcuityKanan').value,
                 MATA_VISUAL_ACUITY_KIRI: document.getElementById('mataVisualAcuityKiri').value,
                 MATA_ISHIHARA_TEST: document.getElementById('mataIshiharaTest').value,
@@ -1687,9 +1867,9 @@
                 if (result && result.success) {
                     alert('✅ Vital signs saved successfully!');
                     showScreen('maDashboard');
-                    loadMADashboard(); // Refresh data
+                    loadMADashboard();
                 } else {
-                    alert('✅ Vital signs demo saved! (Backend simulation)');
+                    alert('✅ Vital signs demo saved!');
                     showScreen('maDashboard');
                     loadMADashboard();
                 }
@@ -1698,6 +1878,10 @@
                 alert('✅ Vital signs demo saved! (Offline mode)');
                 showScreen('maDashboard');
                 loadMADashboard();
+            } finally {
+                saveText.style.display = 'inline-block';
+                saveLoading.style.display = 'none';
+                saveBtn.disabled = false;
             }
         });
 
@@ -1705,6 +1889,13 @@
         async function showLabReviewScreen() {
             showScreen('labReviewScreen');
             await loadWorkersForLab();
+        }
+
+        function startLabInput(workerId) {
+            showScreen('labReviewScreen');
+            loadWorkersForLab().then(() => {
+                document.getElementById('labWorkerSelect').value = workerId;
+            });
         }
 
         async function loadWorkersForLab() {
@@ -1770,11 +1961,19 @@
         document.getElementById('labResultsForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const saveBtn = document.querySelector('#labResultsForm button[type="submit"]');
+            const saveText = document.getElementById('labSaveText');
+            const saveLoading = document.getElementById('labSaveLoading');
+            
+            saveText.style.display = 'none';
+            saveLoading.style.display = 'inline-block';
+            saveBtn.disabled = true;
+
             const formData = {
                 WORKER_ID: document.getElementById('labWorkerSelect').value,
                 SESSION_ID: currentSession.SESSION_ID,
                 KLINIK_ID: currentKlinik.id,
-                MA_ID: currentUser.userId || 'MA_001',
+                MA_ID: currentUser.userId || 'MA_DEMO',
                 LAB_HB_VALUE: document.getElementById('labHb').value,
                 LAB_HB_STATUS: 'NORMAL',
                 LAB_WBC_VALUE: document.getElementById('labWbc').value,
@@ -1804,6 +2003,10 @@
                 alert('✅ Lab results demo saved! (Offline mode)');
                 showScreen('maDashboard');
                 loadMADashboard();
+            } finally {
+                saveText.style.display = 'inline-block';
+                saveLoading.style.display = 'none';
+                saveBtn.disabled = false;
             }
         });
 
@@ -1846,7 +2049,7 @@
         async function loadDoctorDashboard() {
             try {
                 document.getElementById('doctorSessionName').textContent = currentSession.SESSION_NAMA;
-                document.getElementById('doctorName').textContent = currentUser.name || 'Dr. Ahmad Bin Abdullah';
+                document.getElementById('doctorName').textContent = currentUser.name || 'Dr. Demo Doctor';
                 
                 // Load demo data for doctor dashboard
                 loadDemoDoctorData();
@@ -1896,7 +2099,7 @@
                 const statusClass = worker.STATUS === 'PENDING REVIEW' ? 'pending' : 'completed';
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${worker.PEKERJA_NAMA}</td>
+                    <td><strong>${worker.PEKERJA_NAMA}</strong></td>
                     <td>${worker.PEKERJA_IC}</td>
                     <td>${worker.VITAL_SIGNS}</td>
                     <td>${worker.LAB_RESULTS}</td>
@@ -1949,19 +2152,89 @@
             });
         }
 
+        // CLEAR SIGNATURE
+        function clearSignature() {
+            const canvas = document.getElementById('doctorSignatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            doctorSignature = null;
+        }
+
+        // SAVE DOCTOR SIGNATURE
+        function saveDoctorSignature() {
+            const canvas = document.getElementById('doctorSignatureCanvas');
+            doctorSignature = canvas.toDataURL();
+            alert('✅ Tandatangan doktor disimpan!');
+        }
+
+        // GENERATE WORKER QR CODE
+        function generateWorkerQR() {
+            const workerSelect = document.getElementById('usechhWorkerSelect');
+            const workerId = workerSelect.value;
+            
+            if (!workerId) {
+                alert('❌ Sila pilih pekerja terlebih dahulu');
+                return;
+            }
+
+            currentWorkerForSignature = workerId;
+            
+            // Generate QR code URL (using a free QR code service)
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MEDSIGN-${workerId}-${Date.now()}`;
+            
+            document.getElementById('qrCodeImage').src = qrUrl;
+            document.getElementById('signaturePad').style.display = 'block';
+            showScreen('qrSignatureScreen');
+        }
+
+        // CLEAR MOBILE SIGNATURE
+        function clearMobileSignature() {
+            const canvas = document.getElementById('mobileSignatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // SUBMIT MOBILE SIGNATURE
+        function submitMobileSignature() {
+            const canvas = document.getElementById('mobileSignatureCanvas');
+            workerSignature = canvas.toDataURL();
+            
+            // Show success message
+            document.getElementById('signaturePad').style.display = 'none';
+            document.getElementById('signatureSuccess').style.display = 'block';
+            
+            // Update the main form
+            setTimeout(() => {
+                document.getElementById('workerSignatureStatus').style.display = 'block';
+            }, 1000);
+        }
+
         // SAVE USECHH FORM
         document.getElementById('usechhForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const saveBtn = document.querySelector('#usechhForm button[type="submit"]');
+            const saveText = document.getElementById('usechhSaveText');
+            const saveLoading = document.getElementById('usechhSaveLoading');
+            
+            saveText.style.display = 'none';
+            saveLoading.style.display = 'inline-block';
+            saveBtn.disabled = true;
+
             if (!doctorSignature) {
                 alert('❌ Sila simpan tandatangan doktor terlebih dahulu');
+                saveText.style.display = 'inline-block';
+                saveLoading.style.display = 'none';
+                saveBtn.disabled = false;
                 return;
             }
 
             const formData = {
                 WORKER_ID: document.getElementById('usechhWorkerSelect').value,
                 SESSION_ID: currentSession.SESSION_ID,
-                DOCTOR_ID: currentUser.userId || 'DOCTOR_001',
+                DOCTOR_ID: currentUser.userId || 'DOCTOR_DEMO',
                 KLINIK_ID: currentKlinik.id,
                 USECHH_A_JAWATAN_SEKARANG: document.getElementById('usechhJawatanSekarang').value,
                 USECHH_A_TEMPOH_JAWATAN: document.getElementById('usechhTempohJawatan').value,
@@ -2004,6 +2277,10 @@
                 alert('✅ Borang USECHH demo disimpan! (Offline mode)');
                 showScreen('doctorDashboard');
                 loadDoctorDashboard();
+            } finally {
+                saveText.style.display = 'inline-block';
+                saveLoading.style.display = 'none';
+                saveBtn.disabled = false;
             }
         });
 
@@ -2021,7 +2298,7 @@
                         <div style="margin: 2rem 0; padding: 1rem; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
                             <h4>BORANG PENILAIAN KESIHATAN PEKERJA (USECHH)</h4>
                             <p>Pekerja: ${document.getElementById('usechhWorkerSelect').selectedOptions[0]?.textContent || 'N/A'}</p>
-                            <p>Doktor: ${currentUser.name || 'Dr. Ahmad Bin Abdullah'}</p>
+                            <p>Doktor: ${currentUser.name || 'Dr. Demo Doctor'}</p>
                             <p>Tarikh: ${new Date().toLocaleDateString('ms-MY')}</p>
                         </div>
                         <button onclick="downloadPDF()" class="btn btn-primary">Muat Turun PDF</button>
@@ -2052,6 +2329,22 @@
             alert('📈 Mengeksport laporan doktor... (Demo)');
         }
 
+        // ADMIN FUNCTIONS
+        function createNewSession() {
+            alert('🆕 Membuat session baru... (Demo)');
+        }
+
+        function generateSystemReport() {
+            alert('📈 Menjana laporan sistem... (Demo)');
+        }
+
+        // UTILITY FUNCTIONS
+        function formatDisplayDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ms-MY');
+        }
+
         // LOGOUT FUNCTION
         function logout() {
             currentUser = null;
@@ -2067,29 +2360,27 @@
             showScreen('loginScreen');
         }
 
-        // UTILITY FUNCTIONS
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ms-MY');
+        // DEMO FUNCTIONS
+        function showBulkUploadScreen() {
+            alert('📁 Bulk upload feature (Demo)');
         }
 
-        // Error handling for uncaught errors
+        function showDigitalSignature() {
+            alert('✍️ Digital signature tools (Demo)');
+        }
+
+        function showQRGenerator() {
+            alert('📱 QR code generator (Demo)');
+        }
+
+        function showTemplateManager() {
+            alert('📋 Template manager (Demo)');
+        }
+
+        // Error handling
         window.addEventListener('error', function(e) {
             console.error('Global error:', e.error);
-            // Don't show alert for demo purposes
         });
-
-        // Demo functions for missing screens
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function generateSystemReport() {
-            alert('📈 Menjana laporan sistem... (Demo)');
-        }
 
     </script>
 

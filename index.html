@@ -4,334 +4,1464 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Surveillance System</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <!-- SheetJS untuk Excel -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        /* COMPLETE CSS SYSTEM */
+        :root {
+            --primary: #2E7D32;
+            --primary-dark: #1B5E20;
+            --primary-light: #4CAF50;
+            --secondary: #1565C0;
+            --accent: #FF8F00;
+            --danger: #C62828;
+            --warning: #F57C00;
+            --success: #388E3C;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-800: #343a40;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* SCREEN MANAGEMENT */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* HEADER & NAVIGATION */
+        .header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-radius: var(--radius);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* LOGIN SCREEN */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* DASHBOARDS */
+        .dashboard {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--gray-100);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* FORMS */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* TABLES */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        tr:hover {
+            background: var(--gray-100);
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-completed { background: #d1edff; color: #004085; }
+        .status-in-progress { background: #d4edda; color: #155724; }
+        .status-abnormal { background: #f8d7da; color: #721c24; }
+
+        /* SIGNATURE CANVAS */
+        .signature-container {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius);
+            padding: 1rem;
+            background: white;
+        }
+
+        .signature-canvas {
+            border: 1px solid var(--gray-300);
+            background: white;
+            cursor: crosshair;
+        }
+
+        /* LAB DUAL-VIEW */
+        .lab-dual-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 600px;
+        }
+
+        .lab-pdf-view, .lab-input-view {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .lab-dual-view {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .screen {
+                padding: 10px;
+            }
+        }
+
+        /* LOADING & ALERTS */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* QR SCANNER */
+        .qr-scanner {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .qr-video {
+            width: 100%;
+            border-radius: var(--radius);
+            border: 2px solid var(--primary);
+        }
+    </style>
 </head>
 <body>
-    <!-- Login Screen -->
+    <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="screen active">
         <div class="login-container">
-            <div class="login-header">
-                <h1>🏥 MEDICAL SURVEILLANCE SYSTEM</h1>
-                <p>Sistem Pengurusan Borang USECHH Digital</p>
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
+                <h1>🏥 Medical Surveillance System</h1>
             </div>
             
-            <div class="login-form">
+            <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="userRole">Peranan:</label>
-                    <select id="userRole" onchange="showRoleFields()">
-                        <option value="">Pilih Peranan</option>
-                        <option value="admin">Admin</option>
-                        <option value="doctor">Doktor</option>
-                        <option value="ma">Medical Assistant</option>
+                    <label for="klinikSelect">Pilih Klinik</label>
+                    <select id="klinikSelect" required>
+                        <option value="">-- Pilih Klinik --</option>
+                        <option value="KLINIK_001">Klinik Kesihatan Utama</option>
                     </select>
                 </div>
 
-                <div id="adminFields" class="role-fields">
-                    <div class="form-group">
-                        <label for="adminName">Nama Admin:</label>
-                        <input type="text" id="adminName" placeholder="Nama admin">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="admin@klinikutama.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata Laluan</label>
+                    <input type="password" id="password" value="admin123" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span id="loginText">Log Masuk</span>
+                    <span id="loginLoading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+
+            <div id="loginAlert" style="margin-top: 1rem;"></div>
+        </div>
+    </div>
+
+    <!-- SUPER ADMIN DASHBOARD -->
+    <div id="superAdminDashboard" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>🏥 Medical Surveillance - Super Admin</h1>
+            </div>
+            <div class="user-info">
+                <span id="adminUserName">Loading...</span>
+                <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalKlinik">0</div>
+                    <div>Jumlah Klinik</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSessions">0</div>
+                    <div>Sessions Aktif</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalWorkers">0</div>
+                    <div>Jumlah Pekerja</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completionRate">0%</div>
+                    <div>Kadar Penyiapan</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3>Sessions Terkini</h3>
+                    <div class="table-container">
+                        <table id="sessionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama Session</th>
+                                    <th>Klinik</th>
+                                    <th>Status</th>
+                                    <th>Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div id="doctorFields" class="role-fields">
-                    <div class="form-group">
-                        <label for="doctorId">ID Doktor:</label>
-                        <input type="text" id="doctorId" placeholder="DR001">
+                <div>
+                    <h3>Tindakan Pantas</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="showScreen('sessionManagementScreen')" class="btn btn-primary">
+                            📅 Urus Sessions
+                        </button>
+                        <button onclick="showScreen('klinikManagementScreen')" class="btn btn-secondary">
+                            🏢 Urus Klinik
+                        </button>
+                        <button onclick="showScreen('userManagementScreen')" class="btn btn-success">
+                            👥 Urus Pengguna
+                        </button>
+                        <button onclick="generateSystemReport()" class="btn btn-outline">
+                            📊 Laporan Sistem
+                        </button>
                     </div>
                 </div>
-
-                <div id="maFields" class="role-fields">
-                    <div class="form-group">
-                        <label for="maId">ID MA:</label>
-                        <input type="text" id="maId" placeholder="MA001">
-                    </div>
-                </div>
-                
-                <button onclick="login()" class="btn-primary">LOGIN</button>
             </div>
         </div>
     </div>
 
-    <!-- Admin Dashboard -->
-    <div id="adminDashboard" class="screen">
-        <div class="dashboard-header">
-            <button onclick="logout()" class="btn-back">← Logout</button>
-            <h2>👨‍💼 ADMIN DASHBOARD</h2>
-            <span id="adminWelcome"></span>
-        </div>
-
-        <div class="dashboard-content">
-            <!-- Upload Section -->
-            <div class="upload-section">
-                <h3>📤 Muat Naik Senarai Pekerja</h3>
-                <div class="upload-box">
-                    <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="previewExcel()">
-                    <label for="excelFile" class="upload-label">
-                        📎 Pilih File Excel
-                    </label>
-                    <div id="filePreview"></div>
-                    <button onclick="uploadWorkers()" class="btn-primary" id="uploadBtn" disabled>Muat Naik</button>
-                </div>
+    <!-- SESSION SELECTION SCREEN -->
+    <div id="sessionSelectionScreen" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>🏥 Pilih Session</h1>
             </div>
-
-            <!-- Company List -->
-            <div class="company-section">
-                <h3>🏢 Senarai Syarikat</h3>
-                <div id="companyList" class="company-grid">
-                    <!-- Dynamic company cards -->
-                </div>
+            <div class="user-info">
+                <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
             </div>
         </div>
-    </div>
 
-    <!-- Doctor Dashboard -->
-    <div id="doctorDashboard" class="screen">
-        <div class="dashboard-header">
-            <button onclick="logout()" class="btn-back">← Logout</button>
-            <h2>👨‍⚕️ DOKTOR DASHBOARD</h2>
-            <span id="doctorWelcome"></span>
-        </div>
-
-        <div class="dashboard-content">
-            <div class="filter-section">
-                <input type="text" id="companySearch" placeholder="Cari syarikat..." onkeyup="filterCompanies()">
-                <select id="statusFilter" onchange="filterCompanies()">
-                    <option value="">Semua Status</option>
-                    <option value="PENDING">Pending</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                </select>
-            </div>
-
-            <div id="doctorCompanyList" class="company-grid">
-                <!-- Dynamic company cards for doctor -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Worker List Screen -->
-    <div id="workerListScreen" class="screen">
-        <div class="dashboard-header">
-            <button onclick="showScreen('doctorDashboard')" class="btn-back">← Kembali</button>
-            <h2 id="workerListTitle">👥 Senarai Pekerja</h2>
-        </div>
-
-        <div class="worker-container">
-            <div class="worker-table-container">
-                <table class="worker-table">
+        <div class="dashboard">
+            <h2>Pilih Session Medical Surveillance</h2>
+            <div class="table-container">
+                <table id="sessionsListTable">
                     <thead>
                         <tr>
-                            <th>Nama</th>
-                            <th>No IC/Passport</th>
-                            <th>Jantina</th>
+                            <th>Nama Session</th>
+                            <th>Syarikat</th>
+                            <th>Tarikh</th>
                             <th>Status</th>
+                            <th>Pekerja</th>
                             <th>Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody id="workerTableBody">
-                        <!-- Dynamic worker rows -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- QR Signature Screen -->
+    <!-- MA DASHBOARD -->
+    <div id="maDashboard" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>👨‍⚕️ Medical Assistant Dashboard</h1>
+            </div>
+            <div class="user-info">
+                <span>Session: <span id="currentSessionName">Loading...</span></span>
+                <button onclick="showScreen('sessionSelectionScreen')" class="btn btn-outline">Tukar Session</button>
+                <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="maTotalWorkers">0</div>
+                    <div>Jumlah Pekerja</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maPendingVitals">0</div>
+                    <div>Pemeriksaan Tertunggak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maCompletedVitals">0</div>
+                    <div>Pemeriksaan Selesai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maLabPending">0</div>
+                    <div>Lab Tertunggak</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                <div>
+                    <h3>Senarai Pekerja</h3>
+                    <div class="table-container">
+                        <table id="maWorkersTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>No. KP</th>
+                                    <th>Jawatan</th>
+                                    <th>Status</th>
+                                    <th>Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Tindakan Pantas</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="showVitalSignsScreen()" class="btn btn-primary">
+                            💓 Input Vital Signs
+                        </button>
+                        <button onclick="showLabReviewScreen()" class="btn btn-secondary">
+                            🧪 Review Lab Results
+                        </button>
+                        <button onclick="exportMAReport()" class="btn btn-success">
+                            📄 Export Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VITAL SIGNS SCREEN -->
+    <div id="vitalSignsScreen" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>💓 Pemeriksaan Vital Signs</h1>
+            </div>
+            <div class="user-info">
+                <button onclick="showScreen('maDashboard')" class="btn btn-outline">Kembali ke Dashboard</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <form id="vitalSignsForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h3>Maklumat Asas</h3>
+                        <div class="form-group">
+                            <label for="workerSelect">Pilih Pekerja</label>
+                            <select id="workerSelect" required>
+                                <option value="">-- Pilih Pekerja --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Vital Signs</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label for="vitalTinggi">Tinggi (cm)</label>
+                                <input type="number" id="vitalTinggi" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalBerat">Berat (kg)</label>
+                                <input type="number" id="vitalBerat" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalBpSistolik">BP Sistolik</label>
+                                <input type="number" id="vitalBpSistolik" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalBpDiastolik">BP Diastolik</label>
+                                <input type="number" id="vitalBpDiastolik" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalPulse">Pulse Rate (bpm)</label>
+                                <input type="number" id="vitalPulse" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vitalSpo2">SpO2 (%)</label>
+                                <input type="number" id="vitalSpo2" min="0" max="100" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3>Pemeriksaan Fizikal</h3>
+                    <!-- Physical examination fields will be added here -->
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="showScreen('maDashboard')" class="btn btn-outline">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Vital Signs</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LAB REVIEW SCREEN -->
+    <div id="labReviewScreen" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>🧪 Semakan Keputusan Makmal</h1>
+            </div>
+            <div class="user-info">
+                <button onclick="showScreen('maDashboard')" class="btn btn-outline">Kembali ke Dashboard</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="lab-dual-view">
+                <div class="lab-pdf-view">
+                    <h3>PDF Lab Report</h3>
+                    <div style="border: 2px dashed #ccc; padding: 2rem; text-align: center; margin-bottom: 1rem;">
+                        <p>Upload PDF Lab Report</p>
+                        <input type="file" id="labPdfUpload" accept=".pdf" style="margin: 1rem 0;">
+                        <button onclick="uploadLabPDF()" class="btn btn-primary">Upload PDF</button>
+                    </div>
+                    <div id="pdfViewer" style="height: 400px; border: 1px solid #ccc; display: none;">
+                        <!-- PDF viewer will be embedded here -->
+                    </div>
+                </div>
+
+                <div class="lab-input-view">
+                    <h3>Input Keputusan Makmal</h3>
+                    <form id="labResultsForm">
+                        <div class="form-group">
+                            <label for="labWorkerSelect">Pilih Pekerja</label>
+                            <select id="labWorkerSelect" required>
+                                <option value="">-- Pilih Pekerja --</option>
+                            </select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label for="labHb">Hemoglobin (g/dL)</label>
+                                <input type="number" id="labHb" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="labWbc">WBC (×10⁹/L)</label>
+                                <input type="number" id="labWbc" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label for="labPlatelet">Platelet (×10⁹/L)</label>
+                                <input type="number" id="labPlatelet">
+                            </div>
+                            <div class="form-group">
+                                <label for="labFbs">FBS (mmol/L)</label>
+                                <input type="number" id="labFbs" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="labKategori">Kategori Keputusan</label>
+                            <select id="labKategori" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <option value="NORMAL">NORMAL</option>
+                                <option value="ABNORMAL (OHD)">ABNORMAL (OHD)</option>
+                                <option value="ABNORMAL (MEDICAL)">ABNORMAL (MEDICAL)</option>
+                                <option value="TIDAK PASTI">TIDAK PASTI</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="labRemarks">Remarks</label>
+                            <textarea id="labRemarks" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Simpan Keputusan Makmal
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add more screens for Doctor, USECHH Form, QR Signature, etc. -->
+
+    <script>
+        // CONFIGURATION - GANTI DENGAN WEB APP URL ANDA
+        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzzIqVHq5Pp5LmXB00jJ4rhQvNkCUzo8NbbFuXTzisb56voeJcLMSLP9L9CFXzpjhI/exec';
+        
+        // GLOBAL STATE
+        let currentUser = null;
+        let currentSession = null;
+        let currentKlinik = null;
+
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Medical Surveillance System Initialized');
+            testBackendConnection();
+        });
+
+        // TEST BACKEND CONNECTION
+        async function testBackendConnection() {
+            try {
+                const response = await fetchBackend('testConnection');
+                if (response.success) {
+                    console.log('✅ Backend connected:', response);
+                } else {
+                    showAlert('loginAlert', '❌ Cannot connect to backend server', 'error');
+                }
+            } catch (error) {
+                console.error('Backend connection failed:', error);
+                showAlert('loginAlert', '❌ Backend connection failed', 'error');
+            }
+        }
+
+        // LOGIN FUNCTION
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.querySelector('#loginForm button');
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            loginBtn.disabled = true;
+
+            const loginData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                klinikId: document.getElementById('klinikSelect').value
+            };
+
+            try {
+                const result = await fetchBackend('login', loginData);
+                
+                if (result.success) {
+                    currentUser = result.user;
+                    currentKlinik = {
+                        id: loginData.klinikId,
+                        name: result.user.klinikName
+                    };
+                    
+                    showAlert('loginAlert', '✅ Login successful!', 'success');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (result.user.role === 'SUPER_ADMIN') {
+                            showScreen('superAdminDashboard');
+                            loadSuperAdminData();
+                        } else if (result.user.role === 'MEDICAL_ASSISTANT') {
+                            showScreen('sessionSelectionScreen');
+                            loadSessionsList();
+                        } else if (result.user.role === 'DOCTOR') {
+                            showScreen('sessionSelectionScreen');
+                            loadSessionsList();
+                        }
+                    }, 1000);
+                    
+                } else {
+                    showAlert('loginAlert', '❌ ' + result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', '❌ Login failed: ' + error.message, 'error');
+            } finally {
+                loginText.style.display = 'inline-block';
+                loginLoading.style.display = 'none';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // BACKEND API COMMUNICATION
+        async function fetchBackend(action, data = {}) {
+            const url = new URL(BACKEND_URL);
+            url.searchParams.append('action', action);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        // SCREEN MANAGEMENT
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show target screen
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // ALERT MANAGEMENT
+        function showAlert(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // LOAD SUPER ADMIN DATA
+        async function loadSuperAdminData() {
+            try {
+                // Load dashboard stats
+                document.getElementById('adminUserName').textContent = currentUser.name;
+                
+                // Example data - in real app, fetch from backend
+                document.getElementById('totalKlinik').textContent = '3';
+                document.getElementById('totalSessions').textContent = '12';
+                document.getElementById('totalWorkers').textContent = '1,247';
+                document.getElementById('completionRate').textContent = '78%';
+                
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
+        }
+
+        // LOAD SESSIONS LIST
+        async function loadSessionsList() {
+            try {
+                const result = await fetchBackend('getSessions', {
+                    klinikId: currentKlinik.id
+                });
+                
+                if (result.success) {
+                    const tableBody = document.querySelector('#sessionsListTable tbody');
+                    tableBody.innerHTML = '';
+                    
+                    result.sessions.forEach(session => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${session.SESSION_NAMA}</td>
+                            <td>${session.SYARIKAT_ID}</td>
+                            <td>${session.SESSION_TARIKH_MULA} - ${session.SESSION_TARIKH_TAMAT}</td>
+                            <td><span class="status-badge status-${session.SESSION_STATUS.toLowerCase()}">${session.SESSION_STATUS}</span></td>
+                            <td>${session.TOTAL_WORKERS} pekerja</td>
+                            <td>
+                                <button onclick="selectSession('${session.SESSION_ID}')" class="btn btn-primary btn-sm">
+                                    Pilih
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        // SESSION SELECTION
+        async function selectSession(sessionId) {
+            try {
+                // Get session details
+                const sessionsResult = await fetchBackend('getSessions', {
+                    klinikId: currentKlinik.id
+                });
+                
+                currentSession = sessionsResult.sessions.find(s => s.SESSION_ID === sessionId);
+                
+                if (currentUser.role === 'MEDICAL_ASSISTANT') {
+                    showScreen('maDashboard');
+                    loadMADashboard();
+                } else if (currentUser.role === 'DOCTOR') {
+                    // Show doctor dashboard
+                    showScreen('doctorDashboard');
+                }
+                
+            } catch (error) {
+                console.error('Error selecting session:', error);
+            }
+        }
+
+        // LOAD MA DASHBOARD
+        async function loadMADashboard() {
+            try {
+                document.getElementById('currentSessionName').textContent = currentSession.SESSION_NAMA;
+                
+                // Load workers for this session
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                if (workersResult.success) {
+                    const tableBody = document.querySelector('#maWorkersTable tbody');
+                    tableBody.innerHTML = '';
+                    
+                    let pendingCount = 0;
+                    let completedCount = 0;
+                    
+                    workersResult.workers.forEach(worker => {
+                        const statusClass = worker.STATUS_PEMERIKSAAN === 'PENDING' ? 'pending' : 'completed';
+                        const                         statusText = worker.STATUS_PEMERIKSAAN === 'PENDING' ? 'TERTUNGGAK' : 'SELESAI';
+                        
+                        if (worker.STATUS_PEMERIKSAAN === 'PENDING') pendingCount++;
+                        if (worker.STATUS_PEMERIKSAAN === 'COMPLETED') completedCount++;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${worker.PEKERJA_NAMA}</td>
+                            <td>${worker.PEKERJA_IC}</td>
+                            <td>${worker.PEKERJA_JAWATAN}</td>
+                            <td><span class="status-badge status-${statusClass}">${statusText}</span></td>
+                            <td>
+                                <button onclick="startVitalSigns('${worker.WORKER_ID}')" class="btn btn-primary btn-sm">
+                                    Input Vital
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    document.getElementById('maTotalWorkers').textContent = workersResult.count;
+                    document.getElementById('maPendingVitals').textContent = pendingCount;
+                    document.getElementById('maCompletedVitals').textContent = completedCount;
+                    document.getElementById('maLabPending').textContent = pendingCount; // Simplified for demo
+                }
+                
+            } catch (error) {
+                console.error('Error loading MA dashboard:', error);
+            }
+        }
+
+        // VITAL SIGNS MANAGEMENT
+        async function showVitalSignsScreen() {
+            showScreen('vitalSignsScreen');
+            await loadWorkersForVitals();
+        }
+
+        async function loadWorkersForVitals() {
+            try {
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                const workerSelect = document.getElementById('workerSelect');
+                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
+                
+                workersResult.workers.forEach(worker => {
+                    const option = document.createElement('option');
+                    option.value = worker.WORKER_ID;
+                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
+                    workerSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading workers:', error);
+            }
+        }
+
+        // SAVE VITAL SIGNS
+        document.getElementById('vitalSignsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                WORKER_ID: document.getElementById('workerSelect').value,
+                SESSION_ID: currentSession.SESSION_ID,
+                KLINIK_ID: currentKlinik.id,
+                MA_ID: currentUser.userId,
+                VITAL_TINGGI: document.getElementById('vitalTinggi').value,
+                VITAL_BERAT: document.getElementById('vitalBerat').value,
+                VITAL_BP_SISTOLIK: document.getElementById('vitalBpSistolik').value,
+                VITAL_BP_DIASTOLIK: document.getElementById('vitalBpDiastolik').value,
+                VITAL_PULSE_RATE: document.getElementById('vitalPulse').value,
+                VITAL_SPO2: document.getElementById('vitalSpo2').value,
+                VITAL_SUHU: '37.0' // Default value
+            };
+
+            try {
+                const result = await fetchBackend('saveVitalSigns', formData);
+                
+                if (result.success) {
+                    alert('✅ Vital signs saved successfully!');
+                    showScreen('maDashboard');
+                    loadMADashboard(); // Refresh data
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Failed to save vital signs: ' + error.message);
+            }
+        });
+
+        // LAB REVIEW MANAGEMENT
+        async function showLabReviewScreen() {
+            showScreen('labReviewScreen');
+            await loadWorkersForLab();
+        }
+
+        async function loadWorkersForLab() {
+            try {
+                const workersResult = await fetchBackend('getWorkers', {
+                    sessionId: currentSession.SESSION_ID
+                });
+                
+                const workerSelect = document.getElementById('labWorkerSelect');
+                workerSelect.innerHTML = '<option value="">-- Pilih Pekerja --</option>';
+                
+                workersResult.workers.forEach(worker => {
+                    const option = document.createElement('option');
+                    option.value = worker.WORKER_ID;
+                    option.textContent = `${worker.PEKERJA_NAMA} (${worker.PEKERJA_IC})`;
+                    workerSelect.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Error loading workers for lab:', error);
+            }
+        }
+
+        // UPLOAD LAB PDF
+        async function uploadLabPDF() {
+            const fileInput = document.getElementById('labPdfUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a PDF file');
+                return;
+            }
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const pdfBlob = e.target.result.split(',')[1]; // Get base64 data
+                    
+                    const uploadData = {
+                        pdfBlob: pdfBlob,
+                        filename: file.name,
+                        workerId: document.getElementById('labWorkerSelect').value,
+                        sessionId: currentSession.SESSION_ID,
+                        klinikId: currentKlinik.id,
+                        maId: currentUser.userId
+                    };
+
+                    const result = await fetchBackend('uploadLabReport', uploadData);
+                    
+                    if (result.success) {
+                        alert('✅ Lab PDF uploaded successfully!');
+                        document.getElementById('pdfViewer').style.display = 'block';
+                        // In real implementation, embed PDF viewer here
+                    } else {
+                        alert('❌ Error: ' + result.error);
+                    }
+                };
+                reader.readAsDataURL(file);
+                
+            } catch (error) {
+                alert('❌ Failed to upload PDF: ' + error.message);
+            }
+        }
+
+        // SAVE LAB RESULTS
+        document.getElementById('labResultsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                WORKER_ID: document.getElementById('labWorkerSelect').value,
+                SESSION_ID: currentSession.SESSION_ID,
+                KLINIK_ID: currentKlinik.id,
+                MA_ID: currentUser.userId,
+                LAB_HB_VALUE: document.getElementById('labHb').value,
+                LAB_HB_STATUS: 'NORMAL', // Auto-calculate based on values
+                LAB_WBC_VALUE: document.getElementById('labWbc').value,
+                LAB_WBC_STATUS: 'NORMAL',
+                LAB_PLATELET_VALUE: document.getElementById('labPlatelet').value,
+                LAB_PLATELET_STATUS: 'NORMAL',
+                LAB_FBS_VALUE: document.getElementById('labFbs').value,
+                LAB_FBS_STATUS: 'NORMAL',
+                LAB_KATEGORI: document.getElementById('labKategori').value,
+                LAB_REMARKS_MA: document.getElementById('labRemarks').value
+            };
+
+            try {
+                const result = await fetchBackend('uploadLabReport', formData);
+                
+                if (result.success) {
+                    alert('✅ Lab results saved successfully!');
+                    showScreen('maDashboard');
+                    loadMADashboard(); // Refresh data
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Failed to save lab results: ' + error.message);
+            }
+        });
+
+        // START VITAL SIGNS FOR SPECIFIC WORKER
+        function startVitalSigns(workerId) {
+            showScreen('vitalSignsScreen');
+            loadWorkersForVitals().then(() => {
+                document.getElementById('workerSelect').value = workerId;
+            });
+        }
+
+        // EXPORT FUNCTIONALITY
+        async function exportMAReport() {
+            try {
+                const result = await fetchBackend('generatePDF', {
+                    sessionId: currentSession.SESSION_ID,
+                    reportType: 'MA_SUMMARY',
+                    klinikId: currentKlinik.id
+                });
+                
+                if (result.success) {
+                    window.open(result.pdfUrl, '_blank');
+                } else {
+                    alert('❌ Error generating report: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Failed to export report: ' + error.message);
+            }
+        }
+
+        // LOGOUT FUNCTION
+        function logout() {
+            currentUser = null;
+            currentSession = null;
+            currentKlinik = null;
+            
+            // Clear form fields
+            document.getElementById('loginForm').reset();
+            
+            showScreen('loginScreen');
+        }
+
+        // UTILITY FUNCTIONS
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ms-MY');
+        }
+
+        function generateQRCode(workerId) {
+            // QR code generation would be implemented here
+            console.log('Generating QR for worker:', workerId);
+            return `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${workerId}`;
+        }
+
+        // Add more functions for other screens as needed...
+
+        // Initialize some demo data on load
+        function initializeDemoData() {
+            // This would be replaced with actual backend calls
+            console.log('Initializing demo data...');
+        }
+
+        // Error handling for uncaught errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            alert('System error occurred. Please refresh the page.');
+        });
+
+    </script>
+
+    <!-- ADD MORE SCREENS HERE -->
+
+    <!-- DOCTOR DASHBOARD -->
+    <div id="doctorDashboard" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>👨‍⚕️ Doctor Dashboard</h1>
+            </div>
+            <div class="user-info">
+                <span>Session: <span id="doctorSessionName">Loading...</span></span>
+                <span>Doctor: <span id="doctorName">Loading...</span></span>
+                <button onclick="showScreen('sessionSelectionScreen')" class="btn btn-outline">Tukar Session</button>
+                <button onclick="logout()" class="btn btn-outline">Log Keluar</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="doctorTotalWorkers">0</div>
+                    <div>Jumlah Pekerja</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="doctorPendingReview">0</div>
+                    <div>Pemeriksaan Tertunggak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="doctorCompletedReview">0</div>
+                    <div>Pemeriksaan Selesai</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="doctorAbnormalCases">0</div>
+                    <div>Kes Abnormal</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                <div>
+                    <h3>Senarai Pekerja untuk Pemeriksaan</h3>
+                    <div class="table-container">
+                        <table id="doctorWorkersTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>No. KP</th>
+                                    <th>Vital Signs</th>
+                                    <th>Lab Results</th>
+                                    <th>Status</th>
+                                    <th>Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Tindakan Pantas</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button onclick="startUSECHHForm()" class="btn btn-primary">
+                            📝 Isi Borang USECHH
+                        </button>
+                        <button onclick="generateMedicalReport()" class="btn btn-secondary">
+                            📄 Generate Laporan
+                        </button>
+                        <button onclick="reviewAbnormalCases()" class="btn btn-danger">
+                                       🚨 Semak Kes Abnormal
+                        </button>
+                        <button onclick="exportDoctorReport()" class="btn btn-success">
+                            📊 Export Laporan Doktor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- USECHH FORM SCREEN -->
+    <div id="usechhFormScreen" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>📝 Borang USECHH - Pemeriksaan Doktor</h1>
+            </div>
+            <div class="user-info">
+                <button onclick="showScreen('doctorDashboard')" class="btn btn-outline">Kembali ke Dashboard</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <form id="usechhForm">
+                <div style="margin-bottom: 2rem;">
+                    <h3>Maklumat Pekerja</h3>
+                    <div class="form-group">
+                        <label for="usechhWorkerSelect">Pilih Pekerja</label>
+                        <select id="usechhWorkerSelect" required>
+                            <option value="">-- Pilih Pekerja --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h4>Section A - Maklumat Pekerjaan</h4>
+                        <div class="form-group">
+                            <label for="usechhJawatanSekarang">Jawatan Sekarang</label>
+                            <input type="text" id="usechhJawatanSekarang" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="usechhTempohJawatan">Tempoh Jawatan (tahun)</label>
+                            <input type="number" id="usechhTempohJawatan" step="0.1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Bahagian Pekerjaan:</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkPengeluaran">
+                                    Pengeluaran
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkPemasangan">
+                                    Pemasangan
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkPenyelenggaraan">
+                                    Penyelenggaraan
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkMakmal">
+                                    Makmal
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>Section B - Pendedahan Kimia</h4>
+                        <div class="form-group">
+                            <label>Jenis Bahan Kimia:</label>
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkPelarutOrganik">
+                                    Pelarut Organik
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkLogamBerat">
+                                    Logam Berat
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="usechhChkGasWap">
+                                    Gas & Wap
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usechhTempohPendedahan">Tempoh Pendedahan (jam/minggu)</label>
+                            <input type="number" id="usechhTempohPendedahan" step="0.5">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4>Section C - Sejarah Perubatan</h4>
+                    <div class="form-group">
+                        <label>Gejala Semasa:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="usechhChkSesakNafas">
+                                Sesak Nafas
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="usechhChkBatukBerterusan">
+                                Batuk Berterusan
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="usechhChkPeningKepala">
+                                Pening Kepala
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="usechhChkMualMuntah">
+                                Mual/Muntah
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usechhPenemuanDoktor">Penemuan Pemeriksaan</label>
+                        <textarea id="usechhPenemuanDoktor" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usechhCadanganDoktor">Cadangan Doktor</label>
+                        <textarea id="usechhCadanganDoktor" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4>Tandatangan Digital</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <p><strong>Tandatangan Pekerja:</strong></p>
+                            <div id="workerSignatureContainer" class="signature-container">
+                                <p>Pekerja akan menandatangani melalui QR code</p>
+                                <button type="button" onclick="generateWorkerQR()" class="btn btn-outline">
+                                    📱 Generate QR Code
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <p><strong>Tandatangan Doktor:</strong></p>
+                            <div class="signature-container">
+                                <canvas id="doctorSignatureCanvas" width="400" height="200" class="signature-canvas"></canvas>
+                                <div style="margin-top: 1rem;">
+                                    <button type="button" onclick="clearSignature()" class="btn btn-outline">
+                                        🗑️ Padam
+                                    </button>
+                                    <button type="button" onclick="saveDoctorSignature()" class="btn btn-primary">
+                                        💾 Simpan Tandatangan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="showScreen('doctorDashboard')" class="btn btn-outline">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        ✅ Simpan Borang USECHH
+                    </button>
+                    <button type="button" onclick="generateUSECHHPDF()" class="btn btn-secondary">
+                        📄 Generate PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- QR SIGNATURE SCREEN -->
     <div id="qrSignatureScreen" class="screen">
-        <div class="dashboard-header">
-            <button onclick="showScreen('workerListScreen')" class="btn-back">← Kembali</button>
-            <h2>✍️ Tandatangan Digital</h2>
-        </div>
-
-        <div class="qr-container">
-            <div class="qr-info">
-                <h3 id="qrWorkerName"></h3>
-                <p id="qrWorkerIC"></p>
-            </div>
-            
-            <div class="qr-code-container">
-                <div id="qrcode"></div>
-                <p>📱 Scan QR code dengan device lain untuk tandatangan</p>
-            </div>
-
-            <div class="signature-preview">
-                <h4>Tandatangan Disimpan:</h4>
-                <img id="signaturePreview" src="" style="display: none; max-width: 300px; border: 1px solid #ddd;">
-                <p id="noSignatureText" style="color: #999;">Belum ada tandatangan</p>
-            </div>
-        </div>
-    </div>
-<!-- MA Dashboard -->
-<div id="maDashboard" class="screen">
-    <div class="dashboard-header">
-        <button onclick="logout()" class="btn-back">← Logout</button>
-        <h2>👨‍⚕️ MEDICAL ASSISTANT DASHBOARD</h2>
-        <span id="maWelcome"></span>
-    </div>
-
-    <div class="dashboard-content">
-        <div class="ma-quick-actions">
-            <div class="action-card" onclick="loadMADashboard()">
-                <div class="action-icon">❤️</div>
-                <h3>Vital Signs</h3>
-                <p>Ambil tanda vital</p>
-            </div>
-            <div class="action-card" onclick="openLabUpload()">
-                <div class="action-icon">📊</div>
-                <h3>Lab Reports</h3>
-                <p>Upload & kategori</p>
-            </div>
-            <div class="action-card" onclick="openTodaySchedule()">
-                <div class="action-icon">📅</div>
-                <h3>Jadual Hari Ini</h3>
-                <p>Lihat jadual</p>
+        <div class="header">
+            <div class="logo">
+                <h1>📱 Tandatangan Digital - Pekerja</h1>
             </div>
         </div>
 
-        <div class="company-section">
-            <h3>🏢 Syarikat untuk Hari Ini</h3>
-            <div id="maCompanyList" class="company-grid">
-                <!-- Dynamic MA company cards -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MA Worker List Screen -->
-<div id="maWorkerListScreen" class="screen">
-    <div class="dashboard-header">
-        <button onclick="showScreen('maDashboard')" class="btn-back">← Kembali</button>
-        <h2 id="maWorkerListTitle">❤️ Pemeriksaan Vital Signs</h2>
-    </div>
-
-    <div class="ma-worker-container">
-        <div class="worker-list" id="maWorkerList">
-            <!-- Dynamic MA worker cards -->
-        </div>
-    </div>
-</div>
-
-<!-- Vital Signs Form Screen -->
-<div id="vitalSignsScreen" class="screen">
-    <div class="dashboard-header">
-        <button onclick="showScreen('maWorkerListScreen')" class="btn-back">← Kembali</button>
-        <h2>❤️ Vital Signs</h2>
-    </div>
-
-    <div class="vital-form-container">
-        <div class="patient-info">
-            <h3 id="vitalWorkerName"></h3>
-            <p id="vitalWorkerIC"></p>
-        </div>
-
-        <div class="vital-form">
-            <div class="form-grid">
-                <div class="input-group">
-                    <label for="tinggi">Tinggi (cm) *</label>
-                    <input type="number" id="tinggi" step="0.1" min="100" max="250" required>
+        <div class="dashboard" style="text-align: center;">
+            <div class="qr-scanner">
+                <h3>Scan QR Code untuk Tandatangan</h3>
+                <div id="qrCodeContainer" style="margin: 2rem 0;">
+                    <img id="qrCodeImage" src="" alt="QR Code" style="max-width: 300px; border: 2px solid #ccc; padding: 1rem;">
                 </div>
+                <p>Scan QR code di atas dengan device anda untuk menandatangani borang</p>
                 
-                <div class="input-group">
-                    <label for="berat">Berat (kg) *</label>
-                    <input type="number" id="berat" step="0.1" min="30" max="200" required>
+                <div id="signaturePad" style="display: none; margin: 2rem auto; max-width: 400px;">
+                    <canvas id="mobileSignatureCanvas" width="400" height="200" 
+                            style="border: 2px solid #000; background: white; touch-action: none;"></canvas>
+                    <div style="margin-top: 1rem;">
+                        <button onclick="clearMobileSignature()" class="btn btn-outline">Padam</button>
+                        <button onclick="submitMobileSignature()" class="btn btn-primary">Hantar Tandatangan</button>
+                    </div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="tekananDarah">Tekanan Darah *</label>
-                    <input type="text" id="tekananDarah" placeholder="120/80" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="suhu">Suhu Badan (°C)</label>
-                    <input type="number" id="suhu" step="0.1" min="35" max="42" placeholder="37.0">
-                </div>
-                
-                <div class="input-group">
-                    <label for="denyutanNadi">Denyutan Nadi (bpm)</label>
-                    <input type="number" id="denyutanNadi" min="40" max="200" placeholder="72">
-                </div>
-                
-                <div class="input-group">
-                    <label for="spo2">SPO2 (%)</label>
-                    <input type="number" id="spo2" min="80" max="100" placeholder="98">
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button onclick="saveVitalSigns()" class="btn-primary">Simpan Vital Signs</button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Lab Upload Screen -->
-<div id="labUploadScreen" class="screen">
-    <div class="dashboard-header">
-        <button onclick="showScreen('maDashboard')" class="btn-back">← Kembali</button>
-        <h2>📊 Lab Reports Management</h2>
-    </div>
-
-    <div class="lab-container">
-        <div class="lab-worker-list" id="labWorkerList">
-            <!-- Dynamic lab worker cards -->
-        </div>
-    </div>
-</div>
-
-<!-- Lab Remarks Screen -->
-<div id="labRemarksScreen" class="screen">
-    <div class="dashboard-header">
-        <button onclick="showScreen('labUploadScreen')" class="btn-back">← Kembali</button>
-        <h2>📝 Lab Remarks & Kategori</h2>
-    </div>
-
-    <div class="lab-remarks-container">
-        <div class="patient-info">
-            <h3 id="labRemarksWorker"></h3>
-        </div>
-
-        <div class="upload-section">
-            <h4>Upload PDF Lab Report</h4>
-            <input type="file" id="labPdfFile" accept=".pdf">
-            <button onclick="uploadLabPDF()" class="btn-secondary">Upload PDF</button>
-            
-            <div id="pdfPreview" class="pdf-preview">
-                <!-- PDF preview will appear here -->
+    <!-- PDF PREVIEW SCREEN -->
+    <div id="pdfPreviewScreen" class="screen">
+        <div class="header">
+            <div class="logo">
+                <h1>📄 Pratonton Laporan</h1>
+            </div>
+            <div class="user-info">
+                <button onclick="showScreen('doctorDashboard')" class="btn btn-outline">Kembali</button>
+                <button onclick="downloadPDF()" class="btn btn-primary">Muat Turun PDF</button>
             </div>
         </div>
 
-        <div class="remarks-section">
-            <h4>Kategori & Remarks</h4>
-            
-            <div class="form-group">
-                <label for="labCategory">Kategori *</label>
-                <select id="labCategory" required>
-                    <option value="">Pilih Kategori</option>
-                    <option value="ABNORMAL_OHD">Abnormal (OHD)</option>
-                    <option value="ABNORMAL_MEDICAL">Abnormal (Medical)</option>
-                    <option value="TIDAK_PASTI">Tidak Pasti</option>
-                    <option value="NORMAL">Normal</option>
-                </select>
+        <div class="dashboard">
+            <div id="pdfPreviewContainer" style="width: 100%; height: 80vh; border: 1px solid #ccc;">
+                <iframe id="pdfViewerIframe" width="100%" height="100%" style="border: none;"></iframe>
             </div>
-
-            <div class="form-group">
-                <label for="labRemarks">Remarks & Nota</label>
-                <textarea id="labRemarks" rows="4" placeholder="Catatan abnormal, pemerhatian khas..."></textarea>
-            </div>
-
-            <button onclick="saveLabRemarks()" class="btn-primary">Simpan Remarks</button>
         </div>
     </div>
-</div>
-    <!-- Include other script files -->
-    <script src="js/auth.js"></script>
-    <script src="js/admin.js"></script>
-    <script src="js/doctor.js"></script>
-    <script src="js/qr-signature.js"></script>
-    <script src="js/app.js"></script>
+
 </body>
 </html>

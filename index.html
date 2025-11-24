@@ -165,7 +165,168 @@
             </div>
         </div>
     </div>
+<!-- MA Dashboard -->
+<div id="maDashboard" class="screen">
+    <div class="dashboard-header">
+        <button onclick="logout()" class="btn-back">← Logout</button>
+        <h2>👨‍⚕️ MEDICAL ASSISTANT DASHBOARD</h2>
+        <span id="maWelcome"></span>
+    </div>
 
+    <div class="dashboard-content">
+        <div class="ma-quick-actions">
+            <div class="action-card" onclick="loadMADashboard()">
+                <div class="action-icon">❤️</div>
+                <h3>Vital Signs</h3>
+                <p>Ambil tanda vital</p>
+            </div>
+            <div class="action-card" onclick="openLabUpload()">
+                <div class="action-icon">📊</div>
+                <h3>Lab Reports</h3>
+                <p>Upload & kategori</p>
+            </div>
+            <div class="action-card" onclick="openTodaySchedule()">
+                <div class="action-icon">📅</div>
+                <h3>Jadual Hari Ini</h3>
+                <p>Lihat jadual</p>
+            </div>
+        </div>
+
+        <div class="company-section">
+            <h3>🏢 Syarikat untuk Hari Ini</h3>
+            <div id="maCompanyList" class="company-grid">
+                <!-- Dynamic MA company cards -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MA Worker List Screen -->
+<div id="maWorkerListScreen" class="screen">
+    <div class="dashboard-header">
+        <button onclick="showScreen('maDashboard')" class="btn-back">← Kembali</button>
+        <h2 id="maWorkerListTitle">❤️ Pemeriksaan Vital Signs</h2>
+    </div>
+
+    <div class="ma-worker-container">
+        <div class="worker-list" id="maWorkerList">
+            <!-- Dynamic MA worker cards -->
+        </div>
+    </div>
+</div>
+
+<!-- Vital Signs Form Screen -->
+<div id="vitalSignsScreen" class="screen">
+    <div class="dashboard-header">
+        <button onclick="showScreen('maWorkerListScreen')" class="btn-back">← Kembali</button>
+        <h2>❤️ Vital Signs</h2>
+    </div>
+
+    <div class="vital-form-container">
+        <div class="patient-info">
+            <h3 id="vitalWorkerName"></h3>
+            <p id="vitalWorkerIC"></p>
+        </div>
+
+        <div class="vital-form">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="tinggi">Tinggi (cm) *</label>
+                    <input type="number" id="tinggi" step="0.1" min="100" max="250" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="berat">Berat (kg) *</label>
+                    <input type="number" id="berat" step="0.1" min="30" max="200" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="tekananDarah">Tekanan Darah *</label>
+                    <input type="text" id="tekananDarah" placeholder="120/80" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="suhu">Suhu Badan (°C)</label>
+                    <input type="number" id="suhu" step="0.1" min="35" max="42" placeholder="37.0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="denyutanNadi">Denyutan Nadi (bpm)</label>
+                    <input type="number" id="denyutanNadi" min="40" max="200" placeholder="72">
+                </div>
+                
+                <div class="input-group">
+                    <label for="spo2">SPO2 (%)</label>
+                    <input type="number" id="spo2" min="80" max="100" placeholder="98">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button onclick="saveVitalSigns()" class="btn-primary">Simpan Vital Signs</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lab Upload Screen -->
+<div id="labUploadScreen" class="screen">
+    <div class="dashboard-header">
+        <button onclick="showScreen('maDashboard')" class="btn-back">← Kembali</button>
+        <h2>📊 Lab Reports Management</h2>
+    </div>
+
+    <div class="lab-container">
+        <div class="lab-worker-list" id="labWorkerList">
+            <!-- Dynamic lab worker cards -->
+        </div>
+    </div>
+</div>
+
+<!-- Lab Remarks Screen -->
+<div id="labRemarksScreen" class="screen">
+    <div class="dashboard-header">
+        <button onclick="showScreen('labUploadScreen')" class="btn-back">← Kembali</button>
+        <h2>📝 Lab Remarks & Kategori</h2>
+    </div>
+
+    <div class="lab-remarks-container">
+        <div class="patient-info">
+            <h3 id="labRemarksWorker"></h3>
+        </div>
+
+        <div class="upload-section">
+            <h4>Upload PDF Lab Report</h4>
+            <input type="file" id="labPdfFile" accept=".pdf">
+            <button onclick="uploadLabPDF()" class="btn-secondary">Upload PDF</button>
+            
+            <div id="pdfPreview" class="pdf-preview">
+                <!-- PDF preview will appear here -->
+            </div>
+        </div>
+
+        <div class="remarks-section">
+            <h4>Kategori & Remarks</h4>
+            
+            <div class="form-group">
+                <label for="labCategory">Kategori *</label>
+                <select id="labCategory" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="ABNORMAL_OHD">Abnormal (OHD)</option>
+                    <option value="ABNORMAL_MEDICAL">Abnormal (Medical)</option>
+                    <option value="TIDAK_PASTI">Tidak Pasti</option>
+                    <option value="NORMAL">Normal</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="labRemarks">Remarks & Nota</label>
+                <textarea id="labRemarks" rows="4" placeholder="Catatan abnormal, pemerhatian khas..."></textarea>
+            </div>
+
+            <button onclick="saveLabRemarks()" class="btn-primary">Simpan Remarks</button>
+        </div>
+    </div>
+</div>
     <!-- Include other script files -->
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
